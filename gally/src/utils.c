@@ -1,13 +1,15 @@
-#pragma once
-
 #ifdef _WIN32
 #include <direct.h>
 #include <io.h>
 #include <cjson/cJSON.h>
-#include "utils.h"
 #endif
 
+#ifdef __unix__
+#include <unistd.h>
+#include "cjson/cJSON.h"
+#endif
 
+#include "utils.h"
 #include <curl/curl.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -93,12 +95,12 @@ int system_Mkdir(char *dir)
     {
         if (*p == '/') {
             *p = 0;
-			if (mkdir(tmp) == 1)
+			if (_mkdir(tmp) == 1)
 				return 1;
             *p = '/';
         }
     }
-    return mkdir(tmp);
+    return _mkdir(tmp);
 }
 
 int system_MakeExec(char *file)

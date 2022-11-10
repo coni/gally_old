@@ -4,7 +4,7 @@
 
 int main()
 {
-    cJSON *versionsManifest = mc_GetMainManifest("versions/");
+    mc_GetMainManifest("versions/");
 
     //MinecraftManifest_get_version_manifest()
 

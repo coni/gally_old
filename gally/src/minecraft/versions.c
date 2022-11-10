@@ -3,6 +3,11 @@
 #include <utils.h>
 #endif
 
+#ifdef __unix__
+#include "../cjson/cJSON.h"
+#include "../utils.h"
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
