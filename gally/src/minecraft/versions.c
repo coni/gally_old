@@ -36,3 +36,31 @@ char *mc_GetInherit(cJSON *manifest)
 		version = manifest->valuestring;
 	return version;
 }
+
+cJSON *mc_GetManifest(cJSON **versionManifest, char *path, char *version)
+{
+	size_t len_fullpath = (strlen(path) + strlen(version)*2 + 8);
+    char *fullpath = malloc(len_fullpath*sizeof(char*));
+    if (fullpath == NULL)
+        return NULL;
+
+    snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
+
+    cJSON *versions = NULL;
+    cJSON *versionInfo  = NULL;
+    cJSON *id = NULL;
+    cJSON *url= NULL;
+
+    versions = cJSON_GetObjectItemCaseSensitive(*versionManifest, "versions");
+    cJSON_ArrayForEach(versionInfo, versions)
+    {
+        id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
+        url = cJSON_GetObjectItemCaseSensitive(versionInfo, "url");
+        if (strcmp(id->valuestring,version) == 0)
+        {
+            http_Download(url->valuestring, fullpath);
+            break;
+        }
+    }
+    return json_ParseFile(fullpath);
+}

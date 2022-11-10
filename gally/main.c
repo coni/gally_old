@@ -4,8 +4,8 @@
 
 int main()
 {
-    mc_GetMainManifest("versions/");
-
+    cJSON *mainManifest = mc_GetMainManifest("versions/");
+    mc_GetManifest(&mainManifest, "versions", "1.19");
     //MinecraftManifest_get_version_manifest()
 
     return 0;

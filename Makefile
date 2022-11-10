@@ -9,7 +9,7 @@ LDLIBS		= -lcurl
 EXE = main
 DIR = gally
 
-SRC	= $(wildcard *.c) $(wildcard ${DIR}/src/*.c) $(wildcard $(DIR)/src/*/*.c)
+SRC	= $(wildcard $(DIR)/*.c) $(wildcard $(DIR)/src/*.c) $(wildcard $(DIR)/src/*/*.c)
 OBJ	= ${SRC:.c=.o}
 DEP	= ${SRC:.c=.d}
 
