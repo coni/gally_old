@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers sources\src">
+      <UniqueIdentifier>{a2fabed5-cbf1-41f8-8522-a0a92fb7286f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\src\minecraft">
+      <UniqueIdentifier>{d0080eff-b297-483c-8b49-b28d712857ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\src\cjson">
+      <UniqueIdentifier>{979edc47-0998-4507-92b2-2a2ceaa64416}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.c">
+      <Filter>Fichiers sources\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\versions.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cjson\cJSON.c">
+      <Filter>Fichiers sources\src\cjson</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\utils.h">
+      <Filter>Fichiers sources\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\versions.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cjson\cJSON.h">
+      <Filter>Fichiers sources\src\cjson</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

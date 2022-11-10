@@ -1,0 +1,10 @@
+# IGNORE
+*Release/
+.vs/
+*versions/
+*.lastbuildstate
+*.tlog
+*.log
+*.pdb
+*.idb
+*x64/
