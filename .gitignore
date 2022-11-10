@@ -1,5 +1,7 @@
 # IGNORE
 *Release/
+*Debug/
+curl/
 .vs/
 *versions/
 *.lastbuildstate
