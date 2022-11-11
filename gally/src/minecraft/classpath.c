@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "../utils.h"
-#include "../cJSON/cJSON.h"
+#include "../cjson/cJSON.h"
 
 int compareLwjglVersion(char* new, char* old)
 {
@@ -21,7 +21,7 @@ char* mc_GetLwjglVersion(cJSON* manifest)
 {
 	cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
 	cJSON* lib = NULL;
-	char* lwjglVersion = malloc(sizeof(char *) * 5);
+	char* lwjglVersion = malloc(sizeof(char *) * 6);
 	strcpy(lwjglVersion, "0.0.0");
 	if (libraries)
 	{
@@ -30,7 +30,7 @@ char* mc_GetLwjglVersion(cJSON* manifest)
 			cJSON *libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
 			int isLwjgl = 0;
 			char* version = NULL;
-			char splittedLibName = libName->valuestring;
+			char* splittedLibName = libName->valuestring;
 			char* splittedLibNameElt = strtok(splittedLibName, ":");
 			char* org = NULL;
 			
@@ -99,7 +99,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 	char* lwjglClasspath = malloc(sizeof(char));
 	strcpy(lwjglClasspath, "");
 
-	char* lwjglVersion = malloc(sizeof(char) * 5);
+	char* lwjglVersion = malloc(sizeof(char) * 6);
 	strcpy(lwjglVersion, "0.0.0");
 
 	if (libraries)
@@ -116,7 +116,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 			org = NULL;
 			name = NULL;
 			version = NULL;
-			int isLwjgl = 0;
+			isLwjgl = 0;
 
 			size_t len_org = strlen(splittedLibNameElt) + 1;
 			org = malloc(sizeof(char) * len_org);
@@ -147,7 +147,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 				splitOrg = strtok(NULL, ".");
 			}
 
-			snprintf(libNameFormatted, len_libNameFormatted, "%s%s/%s/%s-%s.jar", libNameFormatted, name, version, name, version);
+			snprintf(libNameFormatted + len_org, len_libNameFormatted - len_org, "%s/%s/%s-%s.jar", name, version, name, version);
 
 			size_t len_fullpath = (strlen(path) + strlen(libNameFormatted) + 2);
 			fullpath = malloc(sizeof(char) * len_fullpath);
