@@ -28,6 +28,9 @@
     <ClCompile Include="src\cjson\cJSON.c">
       <Filter>Fichiers sources\src\cjson</Filter>
     </ClCompile>
+    <ClCompile Include="src\minecraft\client.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utils.h">
@@ -38,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="src\cjson\cJSON.h">
       <Filter>Fichiers sources\src\cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\client.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

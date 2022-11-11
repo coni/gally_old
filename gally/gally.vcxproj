@@ -149,11 +149,13 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="src\cjson\cJSON.c" />
+    <ClCompile Include="src\minecraft\client.c" />
     <ClCompile Include="src\minecraft\versions.c" />
     <ClCompile Include="src\utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cjson\cJSON.h" />
+    <ClInclude Include="src\minecraft\client.h" />
     <ClInclude Include="src\minecraft\versions.h" />
     <ClInclude Include="src\utils.h" />
   </ItemGroup>

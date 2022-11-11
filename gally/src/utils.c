@@ -1,15 +1,12 @@
 #ifdef _WIN32
 #include <direct.h>
 #include <io.h>
-#include <cjson/cJSON.h>
 #endif
 
 #ifdef __unix__
 #include <unistd.h>
-#include "cjson/cJSON.h"
 #endif
 
-#include "utils.h"
 #include <curl/curl.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -17,8 +14,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cjson/cJSON.h"
+#include "utils.h"
+
 // VERY TRASH, NEED FIX
-cJSON *json_ParseFile(char *filename)
+cJSON* json_ParseFile(char* filename)
 {
 	int c;
 	int index = 0;
@@ -39,15 +39,15 @@ cJSON *json_ParseFile(char *filename)
 	return cJSON_Parse(content);
 }
 
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
 {
 	size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
 	return written;
 }
 
-int http_Download(char *url, char *filename)
+int http_Download(char* url, char* filename)
 {
-	CURL **session = curl_easy_init();
+	CURL** session = curl_easy_init();
 
 	// Source : https://curl.se/libcurl/c/url2file.html
 	if (system_FileExist(filename) == 0)
@@ -78,15 +78,15 @@ int http_Download(char *url, char *filename)
 }
 
 
-int system_Exec(char *command)
+int system_Exec(char* command)
 {
     return system(command);
 }
 
-int system_Mkdir(char *dir) 
+int system_Mkdir(char* dir) 
 {
     char tmp[1024];
-    char *p = NULL;
+    char* p = NULL;
 
     snprintf(tmp, sizeof(tmp), "%s", dir);
 
@@ -103,10 +103,10 @@ int system_Mkdir(char *dir)
     return _mkdir(tmp);
 }
 
-int system_MakeExec(char *file)
+int system_MakeExec(char* file)
 {
 	size_t len_command = strlen(file) + 8;
-    char *command = malloc(len_command);
+    char* command = malloc(len_command);
 
 	if (command != NULL)
 	{
@@ -120,13 +120,13 @@ int system_MakeExec(char *file)
 	return 1;
 }
 
-void system_Error(int code, char *string)
+void system_Error(int code, char* string)
 {
     fprintf(stderr, string);
     exit(code);
 }
 
-int system_FileExist(char *path)
+int system_FileExist(char* path)
 {
 	return access(path, F_OK);
 }

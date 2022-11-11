@@ -13,10 +13,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-cJSON *mc_GetMainManifest(char *path)
+cJSON* mc_GetMainManifest(char* path)
 {
-	size_t len_fullpath = (strlen(path) + 24) * sizeof(char*);
-	char *fullpath = malloc(len_fullpath);
+	size_t len_fullpath = (strlen(path) + 25)*  sizeof(char*);
+	char* fullpath = malloc(len_fullpath);
 
 	if (fullpath != NULL)
 	{
@@ -28,30 +28,30 @@ cJSON *mc_GetMainManifest(char *path)
 	return NULL;
 }
 
-char *mc_GetInherit(cJSON *manifest)
+char* mc_GetInherit(cJSON* manifest)
 {
-	char * version = NULL;
+	char*  version = NULL;
 	manifest = cJSON_GetObjectItemCaseSensitive(manifest, "inheritsFrom");
 	if (manifest)
 		version = manifest->valuestring;
 	return version;
 }
 
-cJSON *mc_GetManifest(cJSON **versionManifest, char *path, char *version)
+cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
 {
 	size_t len_fullpath = (strlen(path) + strlen(version)*2 + 8);
-    char *fullpath = malloc(len_fullpath*sizeof(char*));
+    char* fullpath = malloc(len_fullpath*sizeof(char*));
     if (fullpath == NULL)
         return NULL;
 
     snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
 
-    cJSON *versions = NULL;
-    cJSON *versionInfo  = NULL;
-    cJSON *id = NULL;
-    cJSON *url= NULL;
+    cJSON* versions = NULL;
+    cJSON* versionInfo  = NULL;
+    cJSON* id = NULL;
+    cJSON* url= NULL;
 
-    versions = cJSON_GetObjectItemCaseSensitive(*versionManifest, "versions");
+    versions = cJSON_GetObjectItemCaseSensitive(versionManifest, "versions");
     cJSON_ArrayForEach(versionInfo, versions)
     {
         id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
