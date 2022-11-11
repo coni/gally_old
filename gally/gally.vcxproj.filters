@@ -31,6 +31,12 @@
     <ClCompile Include="src\minecraft\client.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
+    <ClCompile Include="src\minecraft\mainclass.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\classpath.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utils.h">
@@ -43,6 +49,12 @@
       <Filter>Fichiers sources\src\cjson</Filter>
     </ClInclude>
     <ClInclude Include="src\minecraft\client.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\mainclass.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\classpath.h">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClInclude>
   </ItemGroup>

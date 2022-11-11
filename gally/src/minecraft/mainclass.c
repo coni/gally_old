@@ -5,9 +5,10 @@
 
 char* mc_GetMainclass(cJSON* manifest)
 {
-	char* mainclass = NULL;
 	cJSON* jsonMainclass = cJSON_GetObjectItemCaseSensitive(manifest, "mainClass");
-	mainclass = malloc(strlen(jsonMainclass->valuestring));
+	char* mainclass = malloc(strlen(jsonMainclass->valuestring));
+	if (mainclass == NULL)
+		return NULL;
 	strcpy(mainclass, jsonMainclass->valuestring);
 	return mainclass;
 }
