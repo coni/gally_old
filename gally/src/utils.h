@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef _WIN32
+static const char OSNAME[] = "windows";
 #define access	_access
 #define R_OK    4
 #define W_OK    2
@@ -8,6 +9,7 @@
 #endif
 
 #ifdef __unix__
+static const char OSNAME[] = "linux";
 #define _mkdir(d) mkdir(d, 0777)
 #endif
 
@@ -22,3 +24,5 @@ int		system_Exec(char *command);
 int		http_Download(char *url, char *filename);
 
 cJSON	*json_ParseFile(char *filename);
+
+char *str_replace(char *orig, char *rep, char *with) ;
