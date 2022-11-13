@@ -15,6 +15,7 @@
 
 cJSON* mc_GetMainManifest(char* path)
 {
+    cJSON* manifest = NULL;
 	size_t len_fullpath = (strlen(path) + 25)*  sizeof(char*);
 	char* fullpath = malloc(len_fullpath);
 
@@ -22,34 +23,33 @@ cJSON* mc_GetMainManifest(char* path)
 	{
 		snprintf(fullpath, len_fullpath, "%s/version_manifest_v2.json", path);
 		http_Download("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json", fullpath);
-		return json_ParseFile(fullpath);
+		manifest = json_ParseFile(fullpath);
 	}
 
-	return NULL;
+    free(fullpath);
+	return manifest;
 }
 
 char* mc_GetInherit(cJSON* manifest)
 {
-	char*  version = NULL;
 	manifest = cJSON_GetObjectItemCaseSensitive(manifest, "inheritsFrom");
 	if (manifest)
-		version = manifest->valuestring;
-	return version;
+		return manifest->valuestring;
+	return NULL;
 }
 
 cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
 {
-	size_t len_fullpath = (strlen(path) + strlen(version)*2 + 8);
-    char* fullpath = malloc(len_fullpath*sizeof(char*));
-    if (fullpath == NULL)
-        return NULL;
-
-    snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
-
+    cJSON* manifest = NULL;
     cJSON* versions = NULL;
     cJSON* versionInfo  = NULL;
     cJSON* id = NULL;
     cJSON* url= NULL;
+	size_t len_fullpath = (strlen(path) + strlen(version)*2 + 8);
+    char* fullpath = malloc(len_fullpath*sizeof(char*));
+    if (fullpath == NULL)
+        return NULL;
+    snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
 
     versions = cJSON_GetObjectItemCaseSensitive(versionManifest, "versions");
     cJSON_ArrayForEach(versionInfo, versions)
@@ -62,5 +62,13 @@ cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
             break;
         }
     }
-    return json_ParseFile(fullpath);
+    manifest = json_ParseFile(fullpath);
+
+    free(versions);
+    free(versionInfo);
+    free(id);
+    free(url);
+    free(fullpath);
+
+    return manifest;
 }
