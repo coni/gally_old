@@ -13,8 +13,8 @@ static const char CLASSSEPARATOR[] = ":";
 #define _mkdir(d) mkdir(d, 0777)
 #endif
 
-char* OSNAME;
-char* ARCHNAME;
+extern char* OSNAME;
+extern char* ARCHNAME;
 
 #include "cjson/cJSON.h"
 

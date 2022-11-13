@@ -21,7 +21,6 @@ cJSON* json_ParseFile(char* filename)
 {
     int c;
     int i = 0;
-    int size = 2;
     char* content = NULL;
     FILE* fp = fopen(filename, "r");
 

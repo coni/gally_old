@@ -13,30 +13,32 @@
 #include "src/cjson/cJSON.h"
 
 
+char* ARCHNAME;
+char* OSNAME;
 
 int main()
 {
-    #ifdef defined(__amd64__) 
+    #ifdef __amd64__ 
         ARCHNAME = "x64";
-    #elif defined(_M_AMD64)
+    #elif _M_AMD64
         ARCHNAME = "x64";
-    #elif  defined(_M_IX86)
+    #elif  _M_IX86
         ARCHNAME = "x86";
-    #elif defined(i386)
+    #elif i386
         ARCHNAME = "i386";
     #endif
 
-    #ifdef __unix
-        OSNAME = "linux";
-    #elif _WIN32
-        OSNAME = "windows";
-    #endif
-
+#ifdef __unix__
+    OSNAME = "linux";
+#elif _WIN32
+    OSNAME = "windows";
+#endif
     ARCHNAME = "x64";
     
     char* username = "coni";
-    char* version = "1.12";
-    char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft";
+    char* version = "1.19.2";
+    /* char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft"; */
+    char* gameRoot = "/home/coni/.minecraft";
     size_t len_gameRoot = strlen(gameRoot);
 
     size_t len_gameRootVersion = len_gameRoot + 10;
@@ -73,7 +75,7 @@ int main()
     gameArguments.game_directory = gameRoot;
     gameArguments.auth_player_name = username;
 
-    printf("%s/bin/java.exe\n%s\n%s\n%s\n", javaPath, mc_GetJvmArgs(manifest, jvmArguments), mc_GetMainclass(manifest), mc_GetGameArgs(manifest, gameArguments));
+    printf("%s/bin/java %s %s %s\n", javaPath, mc_GetJvmArgs(manifest, jvmArguments), mc_GetMainclass(manifest), mc_GetGameArgs(manifest, gameArguments));
 
     return 0;
 }

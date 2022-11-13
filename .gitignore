@@ -6,7 +6,7 @@ curl/
 *versions/
 *.lastbuildstate
 *.tlog
-*.log
+*.log*
 *.pdb
 *.idb
 *x64/
