@@ -27,8 +27,7 @@ GameArgs mc_InitGameArgs()
 	args.clientid = "NULL";
 	args.auth_xuid = "NULL";
 	args.user_type = "mojang";
-	args.version = "";
-	args.version_name = "NULL";
+	args.version = "NULL";
 	args.version_type = "release";
 	args.resolution_width = "NULL";
 	args.resolution_height = "NULL";
@@ -70,8 +69,8 @@ char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
 					}
 					else if (strcmp("${version_name}",i->valuestring) == 0)
 					{
-						gameArguments = realloc(gameArguments, sizeof(char*)*(strlen(gameArguments)+strlen(args.version_name)));
-						strcat(gameArguments, args.version_name);
+						gameArguments = realloc(gameArguments, sizeof(char*)*(strlen(gameArguments)+strlen(args.version)));
+						strcat(gameArguments, args.version);
 					}
 					else if (strcmp("${game_directory}",i->valuestring) == 0)
 					{
@@ -140,7 +139,7 @@ char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
 			if (strstr(i->valuestring, "${user_properties}"))
 				i->valuestring = str_replace(i->valuestring, "${user_properties}", args.user_properties);
 			if (strstr(i->valuestring, "${version_name}"))
-				i->valuestring = str_replace(i->valuestring, "${version_name}", args.version_name);
+				i->valuestring = str_replace(i->valuestring, "${version_name}", args.version);
 			if (strstr(i->valuestring, "${game_directory}"))
 				i->valuestring = str_replace(i->valuestring, "${game_directory}", args.game_directory);
 			if (strstr(i->valuestring, "${assets_root}"))

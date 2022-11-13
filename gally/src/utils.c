@@ -17,28 +17,28 @@
 #include "cjson/cJSON.h"
 #include "utils.h"
 
-// VERY TRASH, NEED FIX
 cJSON* json_ParseFile(char* filename)
 {
-	int c;
-	int index = 0;
-	int size = 2;
-	char* content = malloc(size);
-	FILE* fp;
+    int c;
+    int i = 0;
+    int size = 2;
+    char* content = NULL;
+    FILE* fp = fopen(filename, "r");
 
-	fp = fopen(filename, "r");
-	while ((c = getc(fp)) != EOF)
-	{
-		if (index >= size - 1)
-			content = realloc(content, size++);
-		content[index] = c;
-		index++;
-	}
-	fclose(fp);
+    while ((c = getc(fp)) != EOF)
+        i++;
 
-	return cJSON_Parse(content);
+    fseek(fp, 0, 0);
+    content = malloc((i + 1) * sizeof(char));
+
+    i = 0;
+    while ((c = getc(fp)) != EOF)
+        content[i++] = c;
+    content[i] = '\0';
+    fclose(fp);
+
+    return cJSON_Parse(content);
 }
-
 char *str_replace(char *orig, char *rep, char *with) 
 {
     char *result; // the return string
@@ -150,14 +150,15 @@ int system_Mkdir(char* dir)
     return _mkdir(tmp);
 }
 
+#ifdef __unix__
 int system_MakeExec(char* file)
 {
-	size_t len_command = strlen(file) + 8;
+	size_t len_command = strlen(file) + 10;
     char* command = malloc(len_command);
 
 	if (command != NULL)
 	{
-		snprintf(command, len_command, "chmod+x %s", file);
+		snprintf(command, len_command, "chmod +x %s", file);
 		system_Exec(command);
 		free(command);
 		return 0;
@@ -166,6 +167,7 @@ int system_MakeExec(char* file)
 	free(command);
 	return 1;
 }
+#endif
 
 void system_Error(int code, char* string)
 {

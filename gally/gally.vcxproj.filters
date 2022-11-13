@@ -37,6 +37,12 @@
     <ClCompile Include="src\minecraft\classpath.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
+    <ClCompile Include="src\minecraft\arguments.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\java.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utils.h">
@@ -55,6 +61,12 @@
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClInclude>
     <ClInclude Include="src\minecraft\classpath.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\arguments.h">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\minecraft\java.h">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClInclude>
   </ItemGroup>
