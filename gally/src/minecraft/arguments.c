@@ -133,7 +133,7 @@ char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
 		if (cJSON_IsString(gameArgJson))
 		{
 			i = gameArgJson;
-			remove_spaces(i->valuestring);
+			//remove_spaces(i->valuestring);
 			if (strstr(i->valuestring, "${auth_player_name}"))
 				i->valuestring = str_replace(i->valuestring, "${auth_player_name}", args.auth_player_name);
 			if (strstr(i->valuestring, "${user_properties}"))

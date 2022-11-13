@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _WIN32
-static const char OSNAME[] = "windows";
+static const char CLASSSEPARATOR[] = ";";
 #define access	_access
 #define R_OK    4
 #define W_OK    2
@@ -9,19 +9,12 @@ static const char OSNAME[] = "windows";
 #endif
 
 #ifdef __unix__
-static const char OSNAME[] = "linux";
+static const char CLASSSEPARATOR[] = ":";
 #define _mkdir(d) mkdir(d, 0777)
 #endif
 
-#ifdef defined(__amd64__) 
-static const char ARCHNAME[] = "x64";
-#elif defined(_M_AMD64)
-static const char ARCHNAME[] = "x64";
-#elif  defined(_M_IX86)
-static const char ARCHNAME[] = "x86";
-#elif defined(i386)
-static const char ARCHNAME[] = "i386";
-#endif
+char* OSNAME;
+char* ARCHNAME;
 
 #include "cjson/cJSON.h"
 

@@ -220,14 +220,14 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 						continue;
 				}
 				lwjglClasspath = realloc(lwjglClasspath, sizeof(char *) * (strlen(lwjglClasspath) + strlen(fullpath) + 1));
-				strcat(lwjglClasspath, ":");
+				strcat(lwjglClasspath, CLASSSEPARATOR);
 				strcat(lwjglClasspath, fullpath);
 			}
 			else
 			{
 				classpath = realloc(classpath, sizeof(char *) * (strlen(classpath) + strlen(fullpath) + 1));
 				strcat(classpath, fullpath);
-				strcat(classpath, ":");
+				strcat(classpath, CLASSSEPARATOR);
 			}
 				// Download Librarie
 			cJSON *libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
