@@ -20,7 +20,7 @@ char* mc_DownloadClient(cJSON* manifest, char* versionPath,  char* version)
 		temp = cJSON_GetObjectItemCaseSensitive(manifest, "id");
 
 		temp = cJSON_GetObjectItemCaseSensitive(jsonVersion, "url");
-		url = malloc((strlen(temp->valuestring)) * sizeof(char));
+		url = malloc((strlen(temp->valuestring) + 1) * sizeof(char));
 		if (url == NULL)
 			return NULL;
 		strcpy(url, temp->valuestring);

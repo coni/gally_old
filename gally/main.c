@@ -28,17 +28,17 @@ int main()
         ARCHNAME = "i386";
     #endif
 
-#ifdef __unix__
-    OSNAME = "linux";
-#elif _WIN32
-    OSNAME = "windows";
-#endif
-    ARCHNAME = "x64";
+    #ifdef __unix__
+        OSNAME = "linux";
+    #elif _WIN32
+        OSNAME = "windows";
+    #endif
+        ARCHNAME = "x64";
     
     char* username = "coni";
     char* version = "1.19.2";
-    /* char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft"; */
-    char* gameRoot = "/home/coni/.minecraft";
+    char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft"; 
+    //char* gameRoot = "/home/coni/.minecraft";
     size_t len_gameRoot = strlen(gameRoot);
 
     size_t len_gameRootVersion = len_gameRoot + 10;
@@ -61,8 +61,8 @@ int main()
     cJSON* manifest = mc_GetManifest(mainManifest, gameRootVersion, version);
 
     char* classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
-    char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version);
-    size_t len_classpath = strlen(classpath) + strlen(clientPath);
+    char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version); // MEM LEAK
+    size_t len_classpath = strlen(classpath);// strlen(clientPath) + 1;
 
     char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
 
@@ -76,6 +76,8 @@ int main()
     gameArguments.auth_player_name = username;
 
     printf("%s/bin/java %s %s %s\n", javaPath, mc_GetJvmArgs(manifest, jvmArguments), mc_GetMainclass(manifest), mc_GetGameArgs(manifest, gameArguments));
+
+    /**/
 
     return 0;
 }

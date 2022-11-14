@@ -274,14 +274,12 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 					http_Download(libUrl, fullpath);	
 				}
 			}
-
-			//free(fullpath);
 		}
 	}
 
 	if (strcmp(lwjglClasspath, "") != 0)
 	{
-		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath));
+		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath) + 1);
 		strcat(classpath, lwjglClasspath);
 	}
     free(org);
@@ -289,13 +287,13 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
     free(version);
     free(native);
     free(lib);
-    /* free(libraries); */
     free(tmp);
     free(tmp_i);
     free(libDlInfo);
-    /* free(lwjglClasspath); */
-    /* free(lwjglVersion); */
     free(splittedLibName);
+    /* free(lwjglVersion); */
+    /* free(lwjglClasspath); */
+    /* free(libraries); */
     /* free(splittedLibNameElt); */
     free(libNameFormatted);
     free(libUrl);
