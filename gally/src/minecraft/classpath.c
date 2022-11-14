@@ -126,9 +126,18 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 	cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
     cJSON* tmp = NULL;
     cJSON* tmp_i = NULL;
+    cJSON* libDlInfo = NULL;
 
 	char* lwjglClasspath = "";
 	char* lwjglVersion = "0.0.0";
+
+    char* splittedLibName = NULL;
+    char* splittedLibNameElt = NULL;
+    char* libNameFormatted = NULL;
+    char* libUrl = NULL;
+    cJSON* libName = NULL;
+    cJSON* urlInfo = NULL;
+
 
 	if (libraries)
 	{
@@ -157,12 +166,11 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             if (isCorrectOs == 0)
                 continue;
 
-			cJSON *libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
-			/* cJSON *libUrl = cJSON_GetObjectItemCaseSensitive(lib, "url"); */
+			libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
             size_t len_libName = strlen(libName->valuestring);
-			char *splittedLibName = libName->valuestring;
-			char *splittedLibNameElt = strtok(splittedLibName, ":");
-			char *libNameFormatted = NULL;
+			splittedLibName = libName->valuestring;
+			splittedLibNameElt = strtok(splittedLibName, ":");
+			libNameFormatted = NULL;
 
 			fullpath = NULL;
 			org = NULL;
@@ -171,24 +179,24 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 			isLwjgl = 0;
 
 			len_org = strlen(splittedLibNameElt) + 1;
-			org = malloc(sizeof(char) * len_org);
+			org = realloc(org, sizeof(char) * len_org);
 			strncpy(org, splittedLibNameElt, len_org);
 			splittedLibNameElt =  strtok(NULL,":");
 
 			len_name = strlen(splittedLibNameElt) + 1;
-			name = malloc(sizeof(char) * len_name);
+			name = realloc(name, sizeof(char) * len_name);
 			strncpy(name, splittedLibNameElt, len_name);
 			splittedLibNameElt =  strtok(NULL,":");
 
 			len_version = strlen(splittedLibNameElt) + 1;
-			version = malloc(sizeof(char) * len_version);
+			version = realloc(version, sizeof(char) * len_version);
 			strncpy(version, splittedLibNameElt, len_version);
 			splittedLibNameElt =  strtok(NULL,":");
 
             if (splittedLibNameElt != NULL)
             {
                 len_native = strlen(splittedLibNameElt) + 2;
-                native = malloc(sizeof(char) * len_native);
+                native = realloc(native, sizeof(char) * len_native);
                 strncpy(native, splittedLibNameElt, len_native);
             }
             else
@@ -198,7 +206,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             }
             
 			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 5;
-			libNameFormatted = malloc(sizeof(char) * len_libNameFormatted);
+			libNameFormatted = realloc(libNameFormatted, sizeof(char) * len_libNameFormatted);
 
             for (int i=0; org[i] != '\0'; i++)
             {
@@ -216,9 +224,8 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             strncat(libNameFormatted, ".jar", len_libNameFormatted);
 
 			size_t len_fullpath = (strlen(path) + strlen(libNameFormatted) + 2);
-			fullpath = malloc(sizeof(char) * len_fullpath);
+			fullpath = realloc(fullpath, sizeof(char) * len_fullpath);
 			snprintf(fullpath, len_fullpath, "%s/%s", path, libNameFormatted);
-            /* printf("%s\n", libNameFormatted); */
 			
 			if (isLwjgl)
 			{
@@ -247,14 +254,14 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 				strcat(classpath, CLASSSEPARATOR);
 			}
 				// Download Librarie
-			cJSON *libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
+			libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
 			if (libDlInfo)
 			{	
 				libDlInfo = cJSON_GetObjectItemCaseSensitive(libDlInfo, "artifact");
 				if (libDlInfo)
 				{
-					cJSON *libUrl = cJSON_GetObjectItemCaseSensitive(libDlInfo, "url");
-					http_Download(libUrl->valuestring, fullpath);
+					urlInfo = cJSON_GetObjectItemCaseSensitive(libDlInfo, "url");
+					http_Download(urlInfo->valuestring, fullpath);
 				}
 			} else
 			{
@@ -262,7 +269,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 				if (libDlInfo)
 				{
 					size_t len_libUrl = strlen(libDlInfo->valuestring) + strlen(libNameFormatted) + 1;
-					char* libUrl = malloc(sizeof(char) * len_libUrl);
+					libUrl = realloc(libUrl, sizeof(char) * len_libUrl);
 					snprintf(libUrl, len_libUrl, "%s%s", libDlInfo->valuestring, libNameFormatted);
 					http_Download(libUrl, fullpath);	
 				}
@@ -277,5 +284,23 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath));
 		strcat(classpath, lwjglClasspath);
 	}
+    free(org);
+    free(name);
+    free(version);
+    free(native);
+    free(lib);
+    /* free(libraries); */
+    free(tmp);
+    free(tmp_i);
+    free(libDlInfo);
+    /* free(lwjglClasspath); */
+    /* free(lwjglVersion); */
+    free(splittedLibName);
+    /* free(splittedLibNameElt); */
+    free(libNameFormatted);
+    free(libUrl);
+    free(libName);
+    free(urlInfo);
+
 	return classpath;
 }
