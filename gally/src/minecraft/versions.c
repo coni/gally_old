@@ -45,8 +45,10 @@ cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
     cJSON* versionInfo  = NULL;
     cJSON* id = NULL;
     cJSON* url= NULL;
+
 	size_t len_fullpath = (strlen(path) + strlen(version)*2 + 8);
     char* fullpath = malloc(len_fullpath*sizeof(char*));
+
     if (fullpath == NULL)
         return NULL;
     snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
@@ -59,15 +61,11 @@ cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
         if (strcmp(id->valuestring,version) == 0)
         {
             http_Download(url->valuestring, fullpath);
-            break;
         }
     }
+
     manifest = json_ParseFile(fullpath);
 
-    free(versions);
-    free(versionInfo);
-    free(id);
-    free(url);
     free(fullpath);
 
     return manifest;

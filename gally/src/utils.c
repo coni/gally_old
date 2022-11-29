@@ -19,6 +19,7 @@
 
 cJSON* json_ParseFile(char* filename)
 {
+    cJSON* parsed = NULL;
     int c;
     int i = 0;
     char* content = NULL;
@@ -35,8 +36,11 @@ cJSON* json_ParseFile(char* filename)
         content[i++] = c;
     content[i] = '\0';
     fclose(fp);
+    parsed = cJSON_Parse(content);
 
-    return cJSON_Parse(content);
+    free(content);
+
+    return parsed;
 }
 char *str_replace(char *orig, char *rep, char *with) 
 {
@@ -93,33 +97,35 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
 
 int http_Download(char* url, char* filename)
 {
-	CURL** session = curl_easy_init();
+    int http_code = 0;
+    curl_global_init(CURL_GLOBAL_ALL);
+	CURL* session = curl_easy_init();
 
 	// Source : https://curl.se/libcurl/c/url2file.html
-	if (system_FileExist(filename) == 0)
-		return 0;
+	if (system_FileExist(filename) != 0)
+    {
 
-	FILE* pagefile;
-	int http_code = 0;
+        FILE* pagefile;
 
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl_easy_setopt(session, CURLOPT_URL, url);
-	curl_easy_setopt(session, CURLOPT_NOPROGRESS, 1L);
-	curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_data);
-	curl_easy_setopt(session, CURLOPT_FOLLOWLOCATION, 1);
+        curl_easy_setopt(session, CURLOPT_URL, url);
+        curl_easy_setopt(session, CURLOPT_NOPROGRESS, 1L);
+        curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(session, CURLOPT_FOLLOWLOCATION, 1);
 
-	system_Mkdir(filename);
-	pagefile = fopen(filename, "wb");
-	if (pagefile) {
-		curl_easy_setopt(session, CURLOPT_WRITEDATA, pagefile);
-		curl_easy_perform(session);
-		fclose(pagefile);
-	}
+        system_Mkdir(filename);
+        pagefile = fopen(filename, "wb");
+        if (pagefile) {
+            curl_easy_setopt(session, CURLOPT_WRITEDATA, pagefile);
+            curl_easy_perform(session);
+            fclose(pagefile);
+        }
+
+    }
+
 	curl_easy_getinfo(session, CURLINFO_RESPONSE_CODE, &http_code);
-
-	curl_global_cleanup();
 	curl_easy_cleanup(session);
-
+    curl_global_cleanup();
+    
 	return http_code;
 }
 

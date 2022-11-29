@@ -34,9 +34,8 @@ char* mc_DownloadClient(cJSON* manifest, char* versionPath,  char* version)
 		http_Download(url, path);
 	}
 
-    free(temp);
-    free(jsonVersion);
     free(url);
+
 	return path;
 }
 

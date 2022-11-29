@@ -1,9 +1,9 @@
 # Makefile
 
 CC			= gcc
-CPPFLAGS 	= 
-CFLAGS 		= -Wall -Werror -Wextra
-LDFLAGS		=
+CPPFLAGS	= 
+CFLAGS 		= -Werror -Wextra -std=c11
+LDFLAGS		= -ggdb3
 LDLIBS		= -lcurl
 
 EXE = main

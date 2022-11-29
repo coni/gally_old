@@ -282,23 +282,13 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath) + 1);
 		strcat(classpath, lwjglClasspath);
 	}
+
+    free(fullpath);
     free(org);
     free(name);
     free(version);
     free(native);
-    free(lib);
-    free(tmp);
-    free(tmp_i);
-    free(libDlInfo);
     free(splittedLibName);
-    /* free(lwjglVersion); */
-    /* free(lwjglClasspath); */
-    /* free(libraries); */
-    /* free(splittedLibNameElt); */
-    free(libNameFormatted);
-    free(libUrl);
-    free(libName);
-    free(urlInfo);
 
 	return classpath;
 }

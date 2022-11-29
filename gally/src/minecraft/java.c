@@ -97,6 +97,7 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
     char* fullpath = NULL;
     cJSON* jreBaseManifest = NULL;
     cJSON* jreManifest = NULL;
+    cJSON* files = NULL;
     cJSON* element = NULL;
     
     if (strcmp(OSNAME, "windows") == 0 || (strcmp(OSNAME, "linux") == 0 && strcmp(ARCHNAME, "i386") == 0))
@@ -122,16 +123,17 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
     jreBaseManifest = mc_GetJreMainManifest(path);
     jreManifest = mc_GetJreManifest(jreBaseManifest, component, path);
 
+
     len_javaPath = strlen(path) + (strlen(component)*2) + strlen(os) + 5;
     javaPath = malloc(len_javaPath * sizeof(char));
     snprintf(javaPath, len_javaPath, "%s/%s/%s/%s", path, component, os, component); 
 
     if (jreManifest)
     {
-        jreManifest = cJSON_GetObjectItemCaseSensitive(jreManifest, "files");
-        if (jreManifest)
+        files = cJSON_GetObjectItemCaseSensitive(files, "files");
+        if (files)
         {
-            cJSON_ArrayForEach(element, jreManifest)
+            cJSON_ArrayForEach(element, files)
             {
                 cJSON* type = cJSON_GetObjectItemCaseSensitive(element, "type");
                 cJSON* downloads = cJSON_GetObjectItemCaseSensitive(element, "downloads");
@@ -140,7 +142,7 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
                 cJSON * url = cJSON_GetObjectItemCaseSensitive(downloads,"url");
                 filename = element->string;
                 len_fullpath = (len_javaPath + strlen(filename) + 2);
-                fullpath = malloc(sizeof(char) * len_fullpath);
+                fullpath = realloc(fullpath, sizeof(char) * len_fullpath);
                 snprintf(fullpath, len_fullpath, "%s/%s", javaPath, filename);
 
                 if (type)
@@ -164,14 +166,10 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
         }
     }
 
-    free(element);
-    free(jreManifest);
-    free(jreBaseManifest);
-    free(fullpath);
-    free(filename);
-    free(component);
-    free(tmpPath);
+    cJSON_Delete(jreManifest);
+    cJSON_Delete(jreBaseManifest);
     free(os);
-    
+    free(tmpPath);
+
     return javaPath;
 }
