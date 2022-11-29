@@ -80,13 +80,16 @@ int main()
     gameArguments.game_directory = gameRoot;
     gameArguments.auth_player_name = username;
 
-    /* printf("%s/bin/java ", javaPath); */
-    /* printf("%s", mc_GetJvmArgs(manifest, jvmArguments)); */
-    /* printf("%s ", mc_GetMainclass(manifest)); */
-    /* printf("%s ", mc_GetGameArgs(manifest, gameArguments)); // PROBLEM */
+    char* gameArgs = mc_GetGameArgs(manifest, gameArguments);
+    char* javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
 
+    printf("%s/bin/java ", javaPath);
+    printf("%s", javaArgs);
+    printf("%s ", mc_GetMainclass(manifest));
+    printf("%s ", gameArgs); // PROBLEM
 
-
+    free(javaArgs);
+    free(gameArgs);
     cJSON_Delete(manifest);
     cJSON_Delete(mainManifest);
     free(gameRootVersion);

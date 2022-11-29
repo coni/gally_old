@@ -197,6 +197,7 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 					len_javaArguments += strlen(temp) + 1;
 				}			
 			}
+            free(temp);
 			javaArguments = malloc(sizeof(char) * len_javaArguments);
 			strcpy(javaArguments, "");
 
@@ -220,6 +221,7 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 					strcat(javaArguments, " ");
 				}
 			}
+            free(temp);
 		}
 	}
 	else
@@ -230,8 +232,9 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 		strcat(javaArguments, " -cp ");
 		strcat(javaArguments, args.classpath);
 	}
-	free(temp);
-	free(i);
-	free(jvmArgJson);
+	/* free(temp); */
+	/* free(i); */
+	/* free(jvmArgJson); */
+    /* cJSON_Delete(jvmArgJson); */
 	return javaArguments;
 }

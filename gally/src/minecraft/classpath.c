@@ -274,6 +274,14 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 					http_Download(libUrl, fullpath);	
 				}
 			}
+
+            free(fullpath);
+            free(libNameFormatted);
+            free(org);
+            free(name);
+            free(version);
+            /* if (native != NULL) */
+            /*     free(native); */
 		}
 	}
 
@@ -283,12 +291,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 		strcat(classpath, lwjglClasspath);
 	}
 
-    free(fullpath);
-    free(org);
-    free(name);
-    free(version);
-    free(native);
-    free(splittedLibName);
+    /* free(fullpath); */
 
 	return classpath;
 }

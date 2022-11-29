@@ -85,7 +85,12 @@ char *str_replace(char *orig, char *rep, char *with)
         tmp = strcpy(tmp, with) + len_with;
         orig += len_front + len_rep; // move to next "end of rep"
     }
-    strcpy(tmp, orig);
+
+    /* strcpy(tmp, orig); */
+    /* free(tmp); */
+    /* free(result); */
+    /* free(ins); */
+
     return result;
 }
 

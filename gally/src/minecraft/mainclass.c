@@ -7,6 +7,6 @@ char* mc_GetMainclass(cJSON* manifest)
 {
 	cJSON* jsonMainclass = cJSON_GetObjectItemCaseSensitive(manifest, "mainClass");
 	char* mainclass = jsonMainclass->valuestring;
-    free(jsonMainclass);
+    /* free(jsonMainclass); */
 	return mainclass;
 }

@@ -166,8 +166,8 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
         }
     }
 
-    cJSON_Delete(jreManifest);
     cJSON_Delete(jreBaseManifest);
+    cJSON_Delete(jreManifest);
     free(os);
     free(tmpPath);
 
