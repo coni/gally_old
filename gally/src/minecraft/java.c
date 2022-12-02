@@ -130,7 +130,7 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
 
     if (jreManifest)
     {
-        files = cJSON_GetObjectItemCaseSensitive(files, "files");
+        files = cJSON_GetObjectItemCaseSensitive(jreManifest, "files");
         if (files)
         {
             cJSON_ArrayForEach(element, files)
