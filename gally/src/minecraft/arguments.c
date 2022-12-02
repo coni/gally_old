@@ -170,6 +170,7 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 	char* javaArguments = NULL;
 	char* temp = NULL;
 	size_t len_javaArguments = 1;
+    char *argumentString = NULL;
 
 	cJSON* i = NULL;
 	cJSON* jvmArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");	
@@ -183,45 +184,68 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 			{
 				if (i->valuestring)
 				{
-					remove_spaces(i->valuestring);
-					if (strstr(i->valuestring, "${natives_directory}"))
-						temp = str_replace(i->valuestring, "${natives_directory}", args.natives_directory);
-					else if (strstr(i->valuestring, "${launcher_name}"))
-						temp = str_replace(i->valuestring, "${launcher_name}", args.launcher_name);
-					else if (strstr(i->valuestring, "${launcher_version}"))
-						temp = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
-					else if (strstr(i->valuestring, "${classpath}"))
-						temp = str_replace(i->valuestring, "${classpath}", args.classpath);
+                    int isAlloc = 0;
+                    size_t len_argumentString = (strlen(i->valuestring)+1);
+                    argumentString = malloc(sizeof(char) * len_argumentString);
+                    memcpy(argumentString, i->valuestring, len_argumentString);
+
+					remove_spaces(argumentString);
+					if (strstr(argumentString, "${natives_directory}"))
+						temp = str_replace(argumentString, "${natives_directory}", args.natives_directory);
+					else if (strstr(argumentString, "${launcher_name}"))
+						temp = str_replace(argumentString, "${launcher_name}", args.launcher_name);
+					else if (strstr(argumentString, "${launcher_version}"))
+						temp = str_replace(argumentString, "${launcher_version}", args.launcher_version);
+					else if (strstr(argumentString, "${classpath}"))
+						temp = str_replace(argumentString, "${classpath}", args.classpath);
 					else
-						temp = i->valuestring;
+                    {
+						temp = argumentString;
+                        isAlloc = 1;
+                    }
 					len_javaArguments += strlen(temp) + 1;
+
+                    if (isAlloc == 0)
+                        free(temp);
+                    free(argumentString);
 				}			
 			}
-            free(temp);
+
 			javaArguments = malloc(sizeof(char) * len_javaArguments);
 			strcpy(javaArguments, "");
 
 			cJSON_ArrayForEach(i, jvmArgJson)
 			{
-				temp = NULL;
 				if (i->valuestring)
 				{
-					remove_spaces(i->valuestring);
-					if (strstr(i->valuestring, "${natives_directory}"))
-						temp = str_replace(i->valuestring, "${natives_directory}", args.natives_directory);
-					else if (strstr(i->valuestring, "${launcher_name}"))
-						temp = str_replace(i->valuestring, "${launcher_name}", args.launcher_name);
-					else if (strstr(i->valuestring, "${launcher_version}"))
-						temp = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
-					else if (strstr(i->valuestring, "${classpath}"))
-						temp = str_replace(i->valuestring, "${classpath}", args.classpath);
+                    int isAlloc = 0;
+                    size_t len_argumentString = (strlen(i->valuestring)+1);
+                    argumentString = malloc(sizeof(char) * len_argumentString);
+                    memcpy(argumentString, i->valuestring, len_argumentString);
+					remove_spaces(argumentString);
+
+					if (strstr(argumentString, "${natives_directory}"))
+						temp = str_replace(argumentString, "${natives_directory}", args.natives_directory);
+					else if (strstr(argumentString, "${launcher_name}"))
+						temp = str_replace(argumentString, "${launcher_name}", args.launcher_name);
+					else if (strstr(argumentString, "${launcher_version}"))
+						temp = str_replace(argumentString, "${launcher_version}", args.launcher_version);
+					else if (strstr(argumentString, "${classpath}"))
+						temp = str_replace(argumentString, "${classpath}", args.classpath);
 					else
-						temp = i->valuestring;
+                    {
+						temp = argumentString;
+                        isAlloc = 1;
+                    }
+
 					strcat(javaArguments, temp);
 					strcat(javaArguments, " ");
+
+                    if (isAlloc == 0)
+                        free(temp);
+                    free(argumentString);
 				}
 			}
-            free(temp);
 		}
 	}
 	else
@@ -232,6 +256,7 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 		strcat(javaArguments, " -cp ");
 		strcat(javaArguments, args.classpath);
 	}
+    /* free(argumentString); */
 	/* free(temp); */
 	/* free(i); */
 	/* free(jvmArgJson); */

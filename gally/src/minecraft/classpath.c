@@ -196,13 +196,12 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             if (splittedLibNameElt != NULL)
             {
                 len_native = strlen(splittedLibNameElt) + 2;
-                native = realloc(native, sizeof(char) * len_native);
+                native = malloc(sizeof(char) * len_native);
                 strncpy(native, splittedLibNameElt, len_native);
             }
             else
             {
                 len_native = 0;
-                native = NULL;
             }
             
 			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 5;
@@ -215,10 +214,11 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             }
 
 			snprintf(libNameFormatted, len_libNameFormatted, "%s/%s/%s/%s-%s", org, name, version, name, version);
-            if (native != NULL)
+            if (len_native != 0)
             {
                 strncat(libNameFormatted, "-", len_libNameFormatted);
                 strncat(libNameFormatted, native, len_libNameFormatted);
+                free(native);
             }
 
             strncat(libNameFormatted, ".jar", len_libNameFormatted);
@@ -280,8 +280,6 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             free(org);
             free(name);
             free(version);
-            /* if (native != NULL) */
-            /*     free(native); */
 		}
 	}
 
@@ -290,8 +288,6 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath) + 1);
 		strcat(classpath, lwjglClasspath);
 	}
-
-    /* free(fullpath); */
 
 	return classpath;
 }
