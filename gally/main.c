@@ -64,11 +64,12 @@ int main()
     cJSON* mainManifest = mc_GetMainManifest(gameRootVersion);
     cJSON* manifest = mc_GetManifest(mainManifest, gameRootVersion, version);
 
-    char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version); // MEM LEAK
+    char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version);
     char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
 
     char* classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
     size_t len_classpath = strlen(classpath) + strlen(clientPath) + 1;
+    char* lwjglVersion = mc_GetLwjglVersion(manifest); 
 
 
     classpath = realloc(classpath, len_classpath);
@@ -83,10 +84,12 @@ int main()
     char* gameArgs = mc_GetGameArgs(manifest, gameArguments);
     char* javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
 
-    printf("%s/bin/java ", javaPath);
-    printf("%s", javaArgs);
-    printf("%s ", mc_GetMainclass(manifest));
-    printf("%s ", gameArgs); // PROBLEM
+
+    /* printf("%s\n", lwjglVersion); */
+    /* printf("%s/bin/java ", javaPath); */
+    /* printf("%s", javaArgs); */
+    /* printf("%s ", mc_GetMainclass(manifest)); */
+    /* printf("%s ", gameArgs); // PROBLEM */
 
     free(javaArgs);
     free(gameArgs);

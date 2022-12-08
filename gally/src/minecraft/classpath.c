@@ -17,87 +17,68 @@ int compareLwjglVersion(char* new, char* old)
 	return 1;
 }
 
+char* str_split(char* text, char chr, int index)
+{
+    int i = 0;
+    size_t len_element = 0;
+    char* element = NULL;
+
+    while (index>0 && text[i] != '\0')
+    {
+        while (text[i] != chr && text[i] != '\0')
+            i++;
+        index--;
+        i++;
+    }
+    
+    if (text[i] == '\0')
+        return NULL;
+
+    while (text[i+len_element] != chr && text[i+len_element] != '\0')
+        len_element++;
+
+
+    element = malloc(sizeof(char) * (len_element+1));
+    for (size_t j = 0; j < len_element; j++)
+        element[j] = text[i+j];
+    element[len_element] = '\0';
+    return element;
+}
+
 char* mc_GetLwjglVersion(cJSON* manifest)
 {
-    cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
-    cJSON *libName = NULL;
-    cJSON* lib = NULL;
-    int isLwjgl;
-    char* version = NULL;
-    char* splittedLibName = NULL;
-    char* splittedLibNameElt = NULL;
-    char* org = NULL;
-    char* name = NULL;
-    char* libNameFormatted = NULL;
-    char* splitOrg = NULL;
-    char* lwjglVersion = "0.0.0";
+	char* name = NULL;
+	char* version = NULL;
 
+	char* lwjglVersion = malloc(sizeof(char) * 6);
+    strcpy(lwjglVersion, "0.0.0");
+
+    cJSON* libName = NULL;
+    cJSON* lib = NULL;
+
+    cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
 	if (libraries)
 	{
 		cJSON_ArrayForEach(lib, libraries)
 		{
-			libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
-            splittedLibName = libName->valuestring;
-            splittedLibNameElt = strtok(splittedLibName, ":");
-			isLwjgl = 0;
-			version = NULL;
-			org = NULL;
-			
-
-			org = realloc(org, sizeof(char *) * strlen(splittedLibNameElt));
-			strcpy(org, splittedLibNameElt);
-			splittedLibNameElt =  strtok(NULL,":");
-
-			name = realloc(name, sizeof(char *) * strlen(splittedLibNameElt));
-			strcpy(name, splittedLibNameElt);
-			splittedLibNameElt =  strtok(NULL,":");
-			
-			version = realloc(version, sizeof(char *) * strlen(splittedLibNameElt));
-			strcpy(version, splittedLibNameElt);
-			
-			libNameFormatted = realloc(libNameFormatted, sizeof (char *) * ((strlen(name) + strlen(version))* 2 + 8));
-			strcpy(libNameFormatted, "");
-
-
-			splitOrg = strtok(org, ".");
-			while (splitOrg)
-			{
-				strcat(libNameFormatted, splitOrg);
-				strcat(libNameFormatted, "/");
-				if (strcmp(splitOrg, "lwjgl") == 0)
-					isLwjgl = 1;
-				splitOrg = strtok(NULL, ".");
-			}
-
-			if (isLwjgl)
-			{
-				version[5] = '\0';
-				if (strcmp(lwjglVersion, version) != 0)
-				{
-					if (compareLwjglVersion(version, lwjglVersion) == 0)
-						strcpy(lwjglVersion, version);
-					else
-						continue;
-				}
-			}
-		}
-	}
-
-	if (strcmp(lwjglVersion, "2.9.4") == 0)
-		lwjglVersion = "2.9.2";
-	else if (strcmp(lwjglVersion, "0.0.0") == 0)
-		lwjglVersion = NULL;
-    
-    free(libraries);
-    free(libName);
-    free(lib);
-    free(version);
-    free(splittedLibName);
-    free(splittedLibNameElt);
-    free(org);
-    free(name);
-    free(libNameFormatted);
-    free(splitOrg);
+            
+            libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
+            if (libName)
+            {
+                
+                name = str_split(libName->valuestring, ':', 1);
+                version = str_split(libName->valuestring, ':', 2);
+                if (strcmp(name, "lwjgl") == 0)
+                {
+                    if (compareLwjglVersion(version, lwjglVersion) == 0)
+                    {
+                        free(lwjglVersion);
+                        lwjglVersion = version;
+                    } 
+                }
+            }
+        }
+    }
 
 	return lwjglVersion;
 }
@@ -119,7 +100,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 
 	int isLwjgl = 0;
 
-	char* classpath = malloc(sizeof(char *));
+	char* classpath = malloc(sizeof(char));
 	strcpy(classpath, "");
 
 	cJSON* lib = NULL;
@@ -131,8 +112,6 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 	char* lwjglClasspath = "";
 	char* lwjglVersion = "0.0.0";
 
-    char* splittedLibName = NULL;
-    char* splittedLibNameElt = NULL;
     char* libNameFormatted = NULL;
     char* libUrl = NULL;
     cJSON* libName = NULL;
@@ -168,43 +147,28 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 
 			libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
             size_t len_libName = strlen(libName->valuestring);
-			splittedLibName = libName->valuestring;
-			splittedLibNameElt = strtok(splittedLibName, ":");
 			libNameFormatted = NULL;
 
+
 			fullpath = NULL;
-			org = NULL;
-			name = NULL;
-			version = NULL;
 			isLwjgl = 0;
 
-			len_org = strlen(splittedLibNameElt) + 1;
-			org = realloc(org, sizeof(char) * len_org);
-			strncpy(org, splittedLibNameElt, len_org);
-			splittedLibNameElt =  strtok(NULL,":");
+            org = str_split(libName->valuestring, ':', 0);
+            len_org = strlen(org);
 
-			len_name = strlen(splittedLibNameElt) + 1;
-			name = realloc(name, sizeof(char) * len_name);
-			strncpy(name, splittedLibNameElt, len_name);
-			splittedLibNameElt =  strtok(NULL,":");
+            name = str_split(libName->valuestring, ':', 1);
+            len_name = strlen(name);
 
-			len_version = strlen(splittedLibNameElt) + 1;
-			version = realloc(version, sizeof(char) * len_version);
-			strncpy(version, splittedLibNameElt, len_version);
-			splittedLibNameElt =  strtok(NULL,":");
+            version = str_split(libName->valuestring, ':', 2);
+            len_version = strlen(version);
 
-            if (splittedLibNameElt != NULL)
-            {
-                len_native = strlen(splittedLibNameElt) + 2;
-                native = malloc(sizeof(char) * len_native);
-                strncpy(native, splittedLibNameElt, len_native);
-            }
+            native = str_split(libName->valuestring, ':', 3);
+            if (native != NULL)
+                len_native = strlen(native);
             else
-            {
                 len_native = 0;
-            }
             
-			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 5;
+			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 6;
 			libNameFormatted = realloc(libNameFormatted, sizeof(char) * len_libNameFormatted);
 
             for (int i=0; org[i] != '\0'; i++)
@@ -229,7 +193,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 			
 			if (isLwjgl)
 			{
-				if (strlen(version) >= 5)
+				if (len_version >= 5)
 					version[5] = '\0';
 
 				if (strcmp(lwjglVersion, version) != 0)
