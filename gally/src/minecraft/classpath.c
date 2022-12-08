@@ -65,20 +65,23 @@ char* mc_GetLwjglVersion(cJSON* manifest)
             libName = cJSON_GetObjectItemCaseSensitive(lib, "name");
             if (libName)
             {
-                
                 name = str_split(libName->valuestring, ':', 1);
-                version = str_split(libName->valuestring, ':', 2);
                 if (strcmp(name, "lwjgl") == 0)
                 {
+                    version = str_split(libName->valuestring, ':', 2);
                     if (compareLwjglVersion(version, lwjglVersion) == 0)
                     {
                         free(lwjglVersion);
                         lwjglVersion = version;
                     } 
+                    else
+                        free(version);
                 }
+                free(name);
             }
         }
     }
+    
 
 	return lwjglVersion;
 }
@@ -87,6 +90,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 {
     int isCorrectOs = 0;
 
+    size_t len_path = strlen(path);
 	char* fullpath = NULL;
 	char* org = NULL;
 	char* name = NULL;
@@ -168,7 +172,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             else
                 len_native = 0;
             
-			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 6;
+			size_t len_libNameFormatted = len_libName + len_name + len_version + len_native + 7;
 			libNameFormatted = realloc(libNameFormatted, sizeof(char) * len_libNameFormatted);
 
             for (int i=0; org[i] != '\0'; i++)
@@ -187,7 +191,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 
             strncat(libNameFormatted, ".jar", len_libNameFormatted);
 
-			size_t len_fullpath = (strlen(path) + strlen(libNameFormatted) + 2);
+			size_t len_fullpath = (len_path + len_libNameFormatted + 2);
 			fullpath = realloc(fullpath, sizeof(char) * len_fullpath);
 			snprintf(fullpath, len_fullpath, "%s/%s", path, libNameFormatted);
 			
@@ -252,6 +256,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath) + 1);
 		strcat(classpath, lwjglClasspath);
 	}
+
 
 	return classpath;
 }

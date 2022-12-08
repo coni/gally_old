@@ -1,4 +1,4 @@
-#include "cJSON/cJSON.h"
+#include "../cjson/cJSON.h"
 #include <curl/curl.h>
 
 cJSON * mc_GetBaseLwjglManifest(char* path);

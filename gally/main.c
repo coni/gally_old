@@ -8,6 +8,7 @@
 #include "src/minecraft/classpath.h"
 #include "src/minecraft/arguments.h"
 #include "src/minecraft/java.h"
+#include "src/minecraft/lwjgl.h"
 
 #include "src/utils.h"
 #include "src/cjson/cJSON.h"
@@ -52,11 +53,13 @@ int main()
     size_t len_gameRootRuntime = len_gameRoot + 9;
     char* gameRootRuntime = malloc(len_gameRootRuntime);
 
-
+    size_t len_gameRootBin = len_gameRoot + 5;
+    char* gameRootBin = malloc(len_gameRootBin);
 
     snprintf(gameRootVersion, len_gameRootVersion, "%s/versions", gameRoot);
     snprintf(gameRootLibraries, len_gameRootLibraries, "%s/libraries", gameRoot);
     snprintf(gameRootRuntime, len_gameRootRuntime, "%s/runtime", gameRoot);
+    snprintf(gameRootBin, len_gameRootBin, "%s/bin", gameRoot);
 
     JvmArgs jvmArguments = mc_InitJvmArgs();
     GameArgs gameArguments = mc_InitGameArgs();
@@ -65,12 +68,11 @@ int main()
     cJSON* manifest = mc_GetManifest(mainManifest, gameRootVersion, version);
 
     char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version);
-    char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
+    /* char* javaPath = mc_DownloadJre(manifest, gameRootRuntime); */
 
+    char* lwjglVersion = mc_GetLwjglVersion(manifest); 
     char* classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
     size_t len_classpath = strlen(classpath) + strlen(clientPath) + 1;
-    char* lwjglVersion = mc_GetLwjglVersion(manifest); 
-
 
     classpath = realloc(classpath, len_classpath);
     strncat(classpath, clientPath, len_classpath);
@@ -83,14 +85,21 @@ int main()
 
     char* gameArgs = mc_GetGameArgs(manifest, gameArguments);
     char* javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
+    char* lwjglPath = mc_DownloadLwjgl(lwjglVersion, gameRootBin);
+    if (lwjglPath)
+        printf("%s\n", lwjglPath);
+    else
+        printf("null\n");
 
 
-    /* printf("%s\n", lwjglVersion); */
+    printf("%s\n", lwjglVersion);
     /* printf("%s/bin/java ", javaPath); */
-    /* printf("%s", javaArgs); */
-    /* printf("%s ", mc_GetMainclass(manifest)); */
-    /* printf("%s ", gameArgs); // PROBLEM */
+    printf("%s", javaArgs);
+    printf("%s ", mc_GetMainclass(manifest));
+    printf("%s ", gameArgs); // PROBLEM
 
+    free(lwjglVersion);
+    free(gameRootBin);
     free(javaArgs);
     free(gameArgs);
     cJSON_Delete(manifest);
@@ -99,7 +108,7 @@ int main()
     free(gameRootLibraries);
     free(gameRootRuntime);
     free(clientPath);
-    free(javaPath);
+    /* free(javaPath); */
     free(classpath);
 
     return 0;
