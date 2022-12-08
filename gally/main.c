@@ -68,7 +68,7 @@ int main()
     cJSON* manifest = mc_GetManifest(mainManifest, gameRootVersion, version);
 
     char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version);
-    /* char* javaPath = mc_DownloadJre(manifest, gameRootRuntime); */
+    char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
 
     char* lwjglVersion = mc_GetLwjglVersion(manifest); 
     char* classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
@@ -86,14 +86,9 @@ int main()
     char* gameArgs = mc_GetGameArgs(manifest, gameArguments);
     char* javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
     char* lwjglPath = mc_DownloadLwjgl(lwjglVersion, gameRootBin);
-    if (lwjglPath)
-        printf("%s\n", lwjglPath);
-    else
-        printf("null\n");
 
 
-    printf("%s\n", lwjglVersion);
-    /* printf("%s/bin/java ", javaPath); */
+    printf("%s/bin/java ", javaPath);
     printf("%s", javaArgs);
     printf("%s ", mc_GetMainclass(manifest));
     printf("%s ", gameArgs); // PROBLEM
@@ -108,7 +103,7 @@ int main()
     free(gameRootLibraries);
     free(gameRootRuntime);
     free(clientPath);
-    /* free(javaPath); */
+    free(javaPath);
     free(classpath);
 
     return 0;
