@@ -1,7 +1,7 @@
 # Makefile
 
 CC			= gcc
-CPPFLAGS	= 
+CPPFLAGS	= -Igally/include/
 CFLAGS 		= -Werror -Wextra -std=c11
 LDFLAGS		= -ggdb3
 LDLIBS		= -lcurl
@@ -16,6 +16,9 @@ DEP	= ${SRC:.c=.d}
 -include $(DEP)
 
 all: $(EXE)
+
+debug: CFLAGS += -ggdb3 -g -DDEBUG
+debug: main
 
 $(EXE): $(DIR)/main
 	mv $(DIR)/main $(EXE)

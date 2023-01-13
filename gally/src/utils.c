@@ -40,6 +40,7 @@ cJSON* json_ParseFile(char* filename)
 
     free(content);
 
+
     return parsed;
 }
 char *str_replace(char *orig, char *rep, char *with) 
@@ -68,7 +69,7 @@ char *str_replace(char *orig, char *rep, char *with)
         ins = tmp + len_rep;
     }
 
-    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+    tmp = result = malloc(sizeof(char) * (strlen(orig) + (len_with - len_rep) * count + 1));
 
     if (!result)
         return NULL;
@@ -86,10 +87,7 @@ char *str_replace(char *orig, char *rep, char *with)
         orig += len_front + len_rep; // move to next "end of rep"
     }
 
-    /* strcpy(tmp, orig); */
-    /* free(tmp); */
-    /* free(result); */
-    /* free(ins); */
+    strcpy(tmp, orig);
 
     return result;
 }

@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../utils.h"
-#include "../cjson/cJSON.h"
+#include "utils.h"
+#include "cjson/cJSON.h"
 
 int compareLwjglVersion(char* new, char* old)
 {
@@ -28,7 +28,8 @@ char* str_split(char* text, char chr, int index)
         while (text[i] != chr && text[i] != '\0')
             i++;
         index--;
-        i++;
+        if (text[i] != '\0')
+            i++;
     }
     
     if (text[i] == '\0')
@@ -130,6 +131,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 	        tmp = cJSON_GetObjectItemCaseSensitive(lib, "rules");
             if (tmp)
             {
+                isCorrectOs = 0;
                 cJSON_ArrayForEach(tmp_i, tmp)
                 {
                     tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "os");
@@ -138,10 +140,28 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
                         tmp = cJSON_GetObjectItemCaseSensitive(tmp, "name");
                         if (tmp)
                         {
-                            if (strcmp(OSNAME, tmp->valuestring) != 0)
+                            if (strcmp(OSNAME, tmp->valuestring) == 0)
                             {
-                                isCorrectOs = 0;
+                                tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "action");
+                                if (tmp)
+                                {
+                                    if (strcmp(tmp->valuestring, "disallow") == 0)
+                                        isCorrectOs = 0;
+                                    else if (strcmp(tmp->valuestring, "allow") == 0)
+                                        isCorrectOs = 1;
+                                }
                             }
+                        }
+                    }
+                    else
+                    {
+                        tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "action");
+                        if (tmp)
+                        {
+                            if (strcmp(tmp->valuestring, "disallow") == 0)
+                                isCorrectOs = 0;
+                            else if (strcmp(tmp->valuestring, "allow") == 0)
+                                isCorrectOs = 1;
                         }
                     }
                 }
@@ -162,6 +182,8 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 
             name = str_split(libName->valuestring, ':', 1);
             len_name = strlen(name);
+            
+            printf("%s\n", org);
 
             version = str_split(libName->valuestring, ':', 2);
             len_version = strlen(version);
@@ -187,6 +209,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
                 strncat(libNameFormatted, "-", len_libNameFormatted);
                 strncat(libNameFormatted, native, len_libNameFormatted);
                 free(native);
+
             }
 
             strncat(libNameFormatted, ".jar", len_libNameFormatted);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../cjson/cJSON.h"
+#include "cjson/cJSON.h"
 
 char*	mc_GetInherit(cJSON* manifest);
 cJSON*	mc_GetMainManifest(char* path);

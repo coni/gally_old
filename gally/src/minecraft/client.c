@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../utils.h"
-#include "../cjson/cJSON.h"
+#include "utils.h"
+#include "cjson/cJSON.h"
 
 char* mc_DownloadClient(cJSON* manifest, char* versionPath,  char* version)
 {

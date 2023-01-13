@@ -1,9 +1,9 @@
-#include "../cjson/cJSON.h"
-#include "../utils.h"
+#include "cjson/cJSON.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "arguments.h"
+#include "minecraft/arguments.h"
 
 JvmArgs mc_InitJvmArgs()
 {
@@ -93,7 +93,7 @@ char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
 			{
 				if (i->valuestring)
 				{
-					remove_spaces(i->valuestring);
+					/* remove_spaces(i->valuestring); */
 					if (strcmp("${auth_player_name}", i->valuestring) == 0)
 						strncat(gameArguments, args.auth_player_name, len_gameArguments);
 					else if (strcmp("${version_name}", i->valuestring) == 0)
@@ -161,7 +161,6 @@ char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
 			//strcpy(gameArguments, i->valuestring);
 		}
 	}
-	free(i);
 	return gameArguments;
 }
 
@@ -173,7 +172,7 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
     char *argumentString = NULL;
 
 	cJSON* i = NULL;
-	cJSON* jvmArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");	
+    cJSON* jvmArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");	
 	
 	if (jvmArgJson)
 	{
@@ -250,11 +249,9 @@ char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 	}
 	else
 	{
-		javaArguments = realloc(javaArguments, (strlen(args.classpath) + strlen(args.natives_directory) + 25) * sizeof(char*));
-		strcat(javaArguments, "-Djava.library.path=");
-		strcat(javaArguments, args.natives_directory);
-		strcat(javaArguments, " -cp ");
-		strcat(javaArguments, args.classpath);
+        size_t len_javaArguments = (strlen(args.classpath) + strlen(args.natives_directory) + 26);
+		javaArguments = malloc(len_javaArguments * sizeof(char));
+        snprintf(javaArguments, len_javaArguments, "-Djava.library.path=%s -cp %s", args.natives_directory, args.classpath);
 	}
     /* free(argumentString); */
 	/* free(temp); */

@@ -1,4 +1,4 @@
-#include "../cjson/cJSON.h"
+#include "cjson/cJSON.h"
 
 typedef struct {
 	char* version;

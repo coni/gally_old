@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../cjson/cJSON.h"
-#include "../utils.h"
+#include "cjson/cJSON.h"
+#include "utils.h"
 
 
 cJSON* mc_GetJreMainManifest(char* path)

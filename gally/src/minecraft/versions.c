@@ -4,8 +4,8 @@
 #endif
 
 #ifdef __unix__
-#include "../cjson/cJSON.h"
-#include "../utils.h"
+#include "cjson/cJSON.h"
+#include "utils.h"
 #endif
 
 #include <string.h>

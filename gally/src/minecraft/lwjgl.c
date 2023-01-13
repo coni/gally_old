@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../cjson/cJSON.h"
-#include "../utils.h"
+
+#include "cjson/cJSON.h"
+#include "utils.h"
 
 cJSON * mc_GetBaseLwjglManifest(char* path)
 {
@@ -35,6 +36,7 @@ char* mc_DownloadLwjgl(char* lwjglVersion, char* path)
       if (tmp)
       {
         tmp = cJSON_GetObjectItemCaseSensitive(tmp, lwjglVersion);
+        printf("%s\n", lwjglVersion);
         if (tmp)
         {
             lwjglPath = malloc((strlen(path) + strlen(lwjglVersion) + 3)*sizeof(char));
