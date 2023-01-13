@@ -15,17 +15,23 @@ DEP	= ${SRC:.c=.d}
 
 -include $(DEP)
 
-all: $(EXE)
+release: $(EXE)
 
 debug: CFLAGS += -ggdb3 -g -DDEBUG
-debug: main
+debug: $(EXE)
 
-$(EXE): $(DIR)/main
-	mv $(DIR)/main $(EXE)
-
-$(DIR)/main: $(OBJ)
+$(EXE): $(OBJ)
+	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $@
 
 clean:
-	rm -f $(OBJ) $(DEP) $(EXE)
+	$(RM) $(OBJ) 
+	$(RM) $(DEP)
+	$(RM) $(EXE)
+	$(RM) -r saves/
+	$(RM) -r stats/
+	$(RM) -r resourcepacks
+	$(RM) -r logs/
+	$(RM) -r options.txt
+	$(RM) -r output-client.log
 
 # END
