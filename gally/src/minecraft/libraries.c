@@ -84,6 +84,13 @@ char* mc_GetLwjglVersion(cJSON* manifest)
         }
     }
     
+    if (lwjglVersion != NULL)
+    {
+        lwjglVersion[5] = '\0';
+
+        if (strcmp(lwjglVersion, "2.9.4") == 0)
+            lwjglVersion[4] = '2';
+    }
 
 	return lwjglVersion;
 }

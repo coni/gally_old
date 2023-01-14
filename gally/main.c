@@ -40,27 +40,8 @@ int main()
     ARCHNAME = "x64";
 
     char* username = "coni";
-    /* char* version = "fabric-loader-0.14.12-1.19.3"; */
     char* version = "1.19.2";
-    /* char* version = "1.18"; */
-    /* char* version = "1.17"; */
-    /* char* version = "1.16"; */
-    /* char* version = "1.15"; */
-    /* char* version = "1.14"; */
-    /* char* version = "1.13"; */
-    /* char* version = "1.12"; */
-    /* char* version = "1.11"; */
-    /* char* version = "1.10"; */
-    /* char* version = "1.9"; */
-    /* char* version = "1.8"; */
-    /* char* version = "1.7.10"; */
-    /* char* version = "1.7.1"; */
-    /* char* version = "1.6"; */
-    /* char* version = "1.5"; */
-    /* char* version = "1.4.2"; */
-    /* char* version = "1.3.1"; */
-    /* char* version = "1.2.5"; */
-    /* char* version = "1.1"; */
+
     size_t len_version = strlen(version);
 
     GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
@@ -81,13 +62,6 @@ int main()
 
     char** classpath = mc_DownloadLibraries(manifest, gamePath);
     char* lwjglVersion = mc_GetLwjglVersion(manifest); 
-    if (lwjglVersion != NULL)
-    {
-        lwjglVersion[5] = '\0';
-
-        if (strcmp(lwjglVersion, "2.9.4") == 0)
-            lwjglVersion[4] = '2';
-    }
 
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
         jvmArguments.natives_directory = gamePath.root;
