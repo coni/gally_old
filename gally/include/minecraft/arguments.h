@@ -1,3 +1,4 @@
+#pragma once
 #include "cjson/cJSON.h"
 
 typedef struct {
@@ -25,6 +26,13 @@ typedef struct {
 	char* launcher_version;
 	char* natives_directory;
 } JvmArgs;
+
+typedef struct {
+    char* java;
+    char** jvm;
+    char* mainclass;
+    char** game;
+} CommandArguments;
 
 char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args);
 char** mc_GetGameArgs(cJSON* manifest, GameArgs args);

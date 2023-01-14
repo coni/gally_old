@@ -43,13 +43,12 @@ cJSON* mc_GetAssetsManifest(cJSON *manifest, GamePath gamePath)
         snprintf(fullpath, len_fullpath, "%s/%s.json", indexesPath, index->valuestring);
         http_Download(url->valuestring, fullpath);
 		assetsManifest = json_ParseFile(fullpath);
-        /* printf("%s\n", fullpath); */
 	}
 
     return assetsManifest;
 }
 
-int mc_DownloadAssets(cJSON *manifest, GamePath gamePath)
+int mc_DownloadAssets(cJSON *assetsManifest, GamePath gamePath)
 {
     char* assetsPath = gamePath.assets;
     size_t len_ressourceUrl = 40;
@@ -62,10 +61,7 @@ int mc_DownloadAssets(cJSON *manifest, GamePath gamePath)
     snprintf(path, len_path, "%s/objects/", assetsPath);
 
 	cJSON* i = NULL;
-    cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
-    /* cJSON* assetsManifest = json_ParseFile("/home/coni/.minecraft/assets/indexes/1.19.json"); */
 	cJSON* tmp = cJSON_GetObjectItemCaseSensitive(assetsManifest, "objects");
-
 	if (tmp)
 	{
 		cJSON_ArrayForEach(i, tmp)
