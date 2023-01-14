@@ -50,7 +50,7 @@ GamePath mc_DefaultGamePath(char* gameRoot)
     return gamePath; 
 }
 
-CommandArguments mc_GetInheritence(char* version, GamePath gamePath, GameSettings gameSettings)
+CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings)
 {
     CommandArguments commandArguments;
 
@@ -90,13 +90,70 @@ CommandArguments mc_GetInheritence(char* version, GamePath gamePath, GameSetting
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
 
-    char** javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
+    char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);
 
     commandArguments.java = javaPath;
-    commandArguments.game = gameArgs;
+    commandArguments.jvm = jvmArgs;
     commandArguments.mainclass = mainclass;
-    commandArguments.jvm = javaArgs;
+    commandArguments.game = gameArgs;
+
+    char* inherit = mc_GetInherit(manifest);
+    if (inherit)
+    {
+        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings);
+        if (commandArguments.java == NULL)
+            commandArguments.java = inheritArgument.java;
+
+        if (commandArguments.mainclass == NULL)
+            commandArguments.mainclass = inheritArgument.mainclass;
+
+        if (jvmArgs[0] != NULL)
+        {
+            size_t len_inheritJvm;
+            for (len_inheritJvm = 0; inheritArgument.jvm[len_inheritJvm] != NULL; len_inheritJvm++);
+            size_t len_jvm;
+            for (len_jvm = 0; jvmArgs[len_jvm] != NULL; len_jvm++);
+            len_inheritJvm += len_jvm;
+            inheritArgument.jvm = realloc(inheritArgument.jvm, sizeof(char*) * (len_inheritJvm + 1));
+            size_t i;
+            int j = 0;
+            for (i = len_inheritJvm - len_jvm; i < len_inheritJvm; i++)
+            {
+                inheritArgument.jvm[i] = malloc(sizeof(char) * (strlen(jvmArgs[j]) + 1));
+                strcpy(inheritArgument.jvm[i], jvmArgs[j]);
+                free(jvmArgs[j++]);
+            }
+            inheritArgument.jvm[i] = NULL;
+            free(jvmArgs);
+            commandArguments.jvm = inheritArgument.jvm;
+        }
+        else
+            commandArguments.jvm = inheritArgument.jvm;
+
+        if (gameArgs[0] != NULL)
+        {
+            size_t len_game;
+            for (len_game = 0; gameArgs[len_game] != NULL; len_game++);
+            size_t len_inheritGame;
+            for (len_inheritGame = 0; inheritArgument.game[len_inheritGame] != NULL; len_inheritGame++);
+            len_inheritGame += len_game;
+            inheritArgument.game = realloc(inheritArgument.game, sizeof(char*) * (len_inheritGame + 1));
+            int j = 0;
+            size_t i;
+            for (i = len_inheritGame - len_game; i < len_inheritGame; i++)
+            {
+                inheritArgument.game[i] = malloc(sizeof(char) * (strlen(gameArgs[j]) + 1));
+                strcpy(inheritArgument.game[i], gameArgs[j]);
+                free(gameArgs[j++]);
+            }
+            inheritArgument.game[i] = NULL;
+            free(gameArgs);
+            commandArguments.game = inheritArgument.game;
+        }
+        else
+            commandArguments.game = inheritArgument.game;
+    }
 
     return commandArguments;
 }

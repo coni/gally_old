@@ -16,5 +16,5 @@ typedef struct {
 } GameSettings;
 
 GamePath mc_DefaultGamePath(char* gameRoot);
-CommandArguments mc_GetInheritence(char* version, GamePath gamePath, GameSettings gameSettings);
+CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings);
 char* mc_CreateCommand(CommandArguments commandArguments);

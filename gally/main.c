@@ -46,7 +46,9 @@ int main()
     gameSetting.downloadAssets = 0;
 
     GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
-    CommandArguments commandArguments = mc_GetInheritence(version, gamePath, gameSetting);
+    CommandArguments commandArguments = mc_DownloadInheritence(version, gamePath, gameSetting);
+    printf("%s\n",commandArguments.java);
+
     char* command = mc_CreateCommand(commandArguments);
     printf("%s\n", command);
 

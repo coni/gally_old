@@ -35,9 +35,14 @@ cJSON* mc_GetMainManifest(GamePath gamePath)
 
 char* mc_GetInherit(cJSON* manifest)
 {
+    char* version = NULL;
 	manifest = cJSON_GetObjectItemCaseSensitive(manifest, "inheritsFrom");
 	if (manifest)
-		return manifest->valuestring;
+    {
+        version = malloc(sizeof(char) * (strlen(manifest->valuestring)+1));
+        strcpy(version, manifest->valuestring);
+		return version;
+    }
 	return NULL;
 }
 
