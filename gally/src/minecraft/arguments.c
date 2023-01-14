@@ -215,11 +215,11 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
                        argv[count++] = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
                     else if (strstr(i->valuestring, "${classpath}"))
                         argv[count++] = cp;
-                           /* argv[count++] = str_replace(i->valuestring, "${classpath}", args.classpath); */
                     else
                     {
-                        argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1));
-                        strcpy(argv[count++], i->valuestring);
+                        /* argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1)); */
+                        /* strcpy(argv[count++], i->valuestring); */
+                        argv[count++] = str_replace(i->valuestring, " ", "\"");
                     }
                 }
             }
