@@ -25,7 +25,8 @@ typedef struct {
 	char* natives_directory;
 } JvmArgs;
 
-char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args);
-char* mc_GetGameArgs(cJSON* manifest, GameArgs args);
+char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args);
+char** mc_GetGameArgs(cJSON* manifest, GameArgs args);
+
 JvmArgs mc_InitJvmArgs();
 GameArgs mc_InitGameArgs();

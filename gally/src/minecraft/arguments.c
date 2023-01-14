@@ -11,7 +11,7 @@ JvmArgs mc_InitJvmArgs()
 	args.classpath = "NULL";
 	args.launcher_name = "gally";
 	args.natives_directory = "NULL";
-	args.launcher_version = "0.1";
+	args.launcher_version = "1.0";
 	return args;
 }
 
@@ -44,219 +44,168 @@ void remove_spaces(char* s) {
     } while ((*s++ = *d++));
 }
 
-char* mc_GetGameArgs(cJSON* manifest, GameArgs args)
+char** mc_GetGameArgs(cJSON* manifest, GameArgs args)
 {
-	char *gameArguments = NULL;
+    char** argv = NULL;
+    cJSON* gameArray = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");
+    cJSON* i = NULL;
+    int argc = 0;
+    int count = 0;
+    if (gameArray)
+    {
+        gameArray = cJSON_GetObjectItemCaseSensitive(gameArray, "game");
+        if (cJSON_IsArray(gameArray))
+        {
+            cJSON_ArrayForEach(i, gameArray)
+                argc = cJSON_IsString(i) ? argc + 1 : argc;
+            argv = malloc(sizeof(char*) * (argc + 1));
+            cJSON_ArrayForEach(i, gameArray)
+            {
+                if (cJSON_IsString(i))
+                {
+                    argv[count] = malloc(sizeof(char) * (strlen(i->valuestring)+1));
+                    strcpy(argv[count++], i->valuestring);
+                }
+            }
+            argv[count] = NULL;
+        }
+    }
+    else if ((i = cJSON_GetObjectItemCaseSensitive(manifest, "minecraftArguments")))
+    {
+        for (int j = 0; i->valuestring[j] != '\0'; j++)
+           argc = i->valuestring[j] == ' ' ? argc + 1 : argc; 
+        argv = malloc(sizeof(char*) * (argc + 1));
+        char* cur_i = i->valuestring;
+        int size = 0;
+        for (size_t j = 0; j <= strlen(i->valuestring); j++)
+        {
+            if (i->valuestring[j] == ' ' || i->valuestring[j] == '\0')
+            {
+                argv[count] = malloc(sizeof(char) * (size+1));
+                strncpy(argv[count++], cur_i, size);
+                cur_i = i->valuestring + j + 1;
+                size = -1;
+            }
+            size++;
+        }
+        argv[count] = NULL;
+    }
 
-	cJSON* i = NULL;
-	cJSON* gameArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");
-	size_t len_gameArguments = 1;
-	
-	if (gameArgJson)
-	{
-		gameArgJson = cJSON_GetObjectItemCaseSensitive(gameArgJson, "game");
-		if (gameArgJson)
-		{
-			cJSON_ArrayForEach(i, gameArgJson)
-			{
-				if (i->valuestring)
-				{
-					if (strcmp("${auth_player_name}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.auth_player_name) + 1;
-					else if (strcmp("${version_name}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.version) + 1;
-					else if (strcmp("${game_directory}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.game_directory) + 1;
-					else if (strcmp("${assets_root}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.assets_root) + 1;
-					else if (strcmp("${assets_index_name}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.assets_index_name) + 1;
-					else if (strcmp("${auth_uuid}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.auth_uuid) + 1;
-					else if (strcmp("${auth_access_token}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.auth_access_token) + 1;
-					else if (strcmp("${clientid}",i->valuestring) == 0)
-							len_gameArguments += strlen(args.clientid) + 1;
-					else if (strcmp("${auth_xuid}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.auth_xuid) + 1;
-					else if (strcmp("${user_type}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.user_type) + 1;
-					else if (strcmp("${version_type}",i->valuestring) == 0)
-						len_gameArguments += strlen(args.version_type) + 1;
-					else
-						len_gameArguments += strlen(i->valuestring) + 1;
-				}			
-			}
-			gameArguments = malloc(sizeof(char) * len_gameArguments);
-			strcpy(gameArguments, "");
-			cJSON_ArrayForEach(i, gameArgJson)
-			{
-				if (i->valuestring)
-				{
-					/* remove_spaces(i->valuestring); */
-					if (strcmp("${auth_player_name}", i->valuestring) == 0)
-						strncat(gameArguments, args.auth_player_name, len_gameArguments);
-					else if (strcmp("${version_name}", i->valuestring) == 0)
-						strncat(gameArguments, args.version, len_gameArguments);
-					else if (strcmp("${game_directory}", i->valuestring) == 0)
-						strncat(gameArguments, args.game_directory, len_gameArguments);
-					else if (strcmp("${assets_root}", i->valuestring) == 0)
-						strncat(gameArguments, args.assets_root, len_gameArguments);
-					else if (strcmp("${assets_index_name}", i->valuestring) == 0)
-						strncat(gameArguments, args.assets_index_name, len_gameArguments);
-					else if (strcmp("${auth_uuid}", i->valuestring) == 0)
-						strncat(gameArguments, args.auth_uuid, len_gameArguments);
-					else if (strcmp("${auth_access_token}", i->valuestring) == 0)
-						strncat(gameArguments, args.auth_access_token, len_gameArguments);
-					else if (strcmp("${clientid}", i->valuestring) == 0)
-						strncat(gameArguments, args.clientid, len_gameArguments);
-					else if (strcmp("${auth_xuid}", i->valuestring) == 0)
-						strncat(gameArguments, args.auth_xuid, len_gameArguments);
-					else if (strcmp("${user_type}", i->valuestring) == 0)
-						strncat(gameArguments, args.user_type, len_gameArguments);
-					else if (strcmp("${version_type}", i->valuestring) == 0)
-						strncat(gameArguments, args.version_type, len_gameArguments);
-					else
-						strncat(gameArguments, i->valuestring, len_gameArguments);
-					strncat(gameArguments, " ", len_gameArguments);
-				}
-			}
-		}
-	} 
-	else
-	{
-		gameArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "minecraftArguments");	
-		if (cJSON_IsString(gameArgJson))
-		{
-			i = gameArgJson;
-			//remove_spaces(i->valuestring);
-			if (strstr(i->valuestring, "${auth_player_name}"))
-				i->valuestring = str_replace(i->valuestring, "${auth_player_name}", args.auth_player_name);
-			if (strstr(i->valuestring, "${user_properties}"))
-				i->valuestring = str_replace(i->valuestring, "${user_properties}", args.user_properties);
-			if (strstr(i->valuestring, "${version_name}"))
-				i->valuestring = str_replace(i->valuestring, "${version_name}", args.version);
-			if (strstr(i->valuestring, "${game_directory}"))
-				i->valuestring = str_replace(i->valuestring, "${game_directory}", args.game_directory);
-			if (strstr(i->valuestring, "${assets_root}"))
-				i->valuestring = str_replace(i->valuestring, "${assets_root}", args.assets_root);
-			if (strstr(i->valuestring, "${game_assets}"))
-				i->valuestring = str_replace(i->valuestring, "${game_assets}", args.assets_root);
-			if (strstr(i->valuestring, "${assets_index_name}"))
-				i->valuestring = str_replace(i->valuestring, "${assets_index_name}", args.assets_index_name);
-			if (strstr(i->valuestring, "${auth_uuid}"))
-				i->valuestring =str_replace (i->valuestring, "${auth_uuid}", args.auth_uuid);
-			if (strstr(i->valuestring, "${auth_access_token}"))
-				i->valuestring = str_replace(i->valuestring, "${auth_access_token}", args.auth_access_token);
-			if (strstr(i->valuestring, "${clientid}"))
-				i->valuestring = str_replace(i->valuestring, "${clientid}", args.clientid);
-			if (strstr(i->valuestring, "${auth_xuid}"))
-				i->valuestring = str_replace(i->valuestring, "${auth_xuid}", args.auth_xuid);
-			if (strstr(i->valuestring, "${user_type}"))
-				i->valuestring = str_replace(i->valuestring, "${user_type}", args.user_type);
-			if (strstr(i->valuestring, "${version_type}"))
-				i->valuestring = str_replace(i->valuestring, "${version_type}", args.version_type);
-			gameArguments = i->valuestring;
-			//realloc(gameArguments, sizeof(char*)*(strlen(i->valuestring)+1));
-			//strcpy(gameArguments, i->valuestring);
-		}
-	}
-	return gameArguments;
+    for (int j = 0; argv[j] != NULL; j++)
+    {
+        if (strcmp("${auth_player_name}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.auth_player_name) + 1));
+            strcpy(argv[j],args.auth_player_name);
+        }
+        else if (strcmp("${version_name}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.version) + 1));
+            strcpy(argv[j],args.version);
+        }
+        else if (strcmp("${game_directory}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.game_directory) + 1));
+            strcpy(argv[j],args.game_directory);
+        }
+        else if (strcmp("${assets_root}", argv[j]) == 0 || strcmp("${game_assets}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.assets_root) + 1));
+            strcpy(argv[j],args.assets_root);
+        }
+        else if (strcmp("${assets_index_name}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.assets_index_name) + 1));
+            strcpy(argv[j],args.assets_index_name);
+        }
+        else if (strcmp("${auth_uuid}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.auth_uuid) + 1));
+            strcpy(argv[j],args.auth_uuid);
+        }
+        else if (strcmp("${auth_access_token}", argv[j]) == 0 || strcmp("${auth_session}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.auth_access_token) + 1));
+            strcpy(argv[j],args.auth_access_token);
+        }
+        else if (strcmp("${clientid}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.clientid) + 1));
+            strcpy(argv[j],args.clientid);
+        }
+        else if (strcmp("${auth_xuid}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.auth_xuid) + 1));
+            strcpy(argv[j],args.auth_xuid);
+        }
+        else if (strcmp("${user_type}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.user_type) + 1));
+            strcpy(argv[j],args.user_type);
+        }
+        else if (strcmp("${version_type}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.version_type) + 1));
+            strcpy(argv[j],args.version_type);
+        }
+    }
+	return argv;
 }
 
-char* mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
+char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 {
-	char* javaArguments = NULL;
-	char* temp = NULL;
-	size_t len_javaArguments = 1;
-    char *argumentString = NULL;
-
-	cJSON* i = NULL;
-    cJSON* jvmArgJson = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");	
-	
-	if (jvmArgJson)
-	{
-		jvmArgJson = cJSON_GetObjectItemCaseSensitive(jvmArgJson, "jvm");
-		if (jvmArgJson)
-		{
-			cJSON_ArrayForEach(i, jvmArgJson)
-			{
-				if (i->valuestring)
-				{
-                    int isAlloc = 0;
-                    size_t len_argumentString = (strlen(i->valuestring)+1);
-                    argumentString = malloc(sizeof(char) * len_argumentString);
-                    memcpy(argumentString, i->valuestring, len_argumentString);
-
-					remove_spaces(argumentString);
-					if (strstr(argumentString, "${natives_directory}"))
-						temp = str_replace(argumentString, "${natives_directory}", args.natives_directory);
-					else if (strstr(argumentString, "${launcher_name}"))
-						temp = str_replace(argumentString, "${launcher_name}", args.launcher_name);
-					else if (strstr(argumentString, "${launcher_version}"))
-						temp = str_replace(argumentString, "${launcher_version}", args.launcher_version);
-					else if (strstr(argumentString, "${classpath}"))
-						temp = str_replace(argumentString, "${classpath}", args.classpath);
-					else
+    char** argv = NULL;
+    int argc = 0;
+    int count = 0;
+    cJSON* jvmArray = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");
+    cJSON* i = NULL;
+    if (jvmArray)
+    {
+        jvmArray = cJSON_GetObjectItemCaseSensitive(jvmArray, "jvm");
+        if (cJSON_IsArray(jvmArray))
+        {
+            cJSON_ArrayForEach(i, jvmArray)
+                argc = cJSON_IsString(i) ? argc + 1 : argc;
+            argv = malloc(sizeof(char*) * (argc+1));
+            cJSON_ArrayForEach(i, jvmArray)
+            {
+                if (cJSON_IsString(i))
+                {
+                    if (strstr(i->valuestring, "${natives_directory}"))
+                       argv[count++] = str_replace(i->valuestring, "${natives_directory}", args.natives_directory);
+                    else if (strstr(i->valuestring, "${launcher_name}"))
+                       argv[count++] = str_replace(i->valuestring, "${launcher_name}", args.launcher_name);
+                    else if (strstr(i->valuestring, "${launcher_version}"))
+                       argv[count++] = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
+                    else if (strstr(i->valuestring, "${classpath}"))
+                        argv[count++] = args.classpath;
+                           /* argv[count++] = str_replace(i->valuestring, "${classpath}", args.classpath); */
+                    else
                     {
-						temp = argumentString;
-                        isAlloc = 1;
+                        argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1));
+                        strcpy(argv[count++], i->valuestring);
                     }
-					len_javaArguments += strlen(temp) + 1;
+                }
+            }
+            argv[count] = NULL;
+        }
+    }
+    else
+    {
+        int tmp_size = strlen(args.natives_directory) + 21;
+        argv = malloc(sizeof(char*) * 4);
+        argv[0] = malloc(sizeof(char) * tmp_size);
+        snprintf(argv[0], tmp_size, "-Djava.library.path=%s", args.natives_directory);
 
-                    if (isAlloc == 0)
-                        free(temp);
-                    free(argumentString);
-				}			
-			}
+        tmp_size = 4;
+        argv[1] = malloc(sizeof(char) * tmp_size);
+        strcpy(argv[1], "-cp");
 
-			javaArguments = malloc(sizeof(char) * len_javaArguments);
-			strcpy(javaArguments, "");
-
-			cJSON_ArrayForEach(i, jvmArgJson)
-			{
-				if (i->valuestring)
-				{
-                    int isAlloc = 0;
-                    size_t len_argumentString = (strlen(i->valuestring)+1);
-                    argumentString = malloc(sizeof(char) * len_argumentString);
-                    memcpy(argumentString, i->valuestring, len_argumentString);
-					remove_spaces(argumentString);
-
-					if (strstr(argumentString, "${natives_directory}"))
-						temp = str_replace(argumentString, "${natives_directory}", args.natives_directory);
-					else if (strstr(argumentString, "${launcher_name}"))
-						temp = str_replace(argumentString, "${launcher_name}", args.launcher_name);
-					else if (strstr(argumentString, "${launcher_version}"))
-						temp = str_replace(argumentString, "${launcher_version}", args.launcher_version);
-					else if (strstr(argumentString, "${classpath}"))
-						temp = str_replace(argumentString, "${classpath}", args.classpath);
-					else
-                    {
-						temp = argumentString;
-                        isAlloc = 1;
-                    }
-
-					strcat(javaArguments, temp);
-					strcat(javaArguments, " ");
-
-                    if (isAlloc == 0)
-                        free(temp);
-                    free(argumentString);
-				}
-			}
-		}
-	}
-	else
-	{
-        size_t len_javaArguments = (strlen(args.classpath) + strlen(args.natives_directory) + 26);
-		javaArguments = malloc(len_javaArguments * sizeof(char));
-        snprintf(javaArguments, len_javaArguments, "-Djava.library.path=%s -cp %s", args.natives_directory, args.classpath);
-	}
-    /* free(argumentString); */
-	/* free(temp); */
-	/* free(i); */
-	/* free(jvmArgJson); */
-    /* cJSON_Delete(jvmArgJson); */
-	return javaArguments;
+        argv[2] = args.classpath;
+        /* argv[2] = malloc(sizeof(char) * (strlen(args.classpath) + 1)); */
+        /* strcpy(argv[2], args.classpath); */
+        argv[3] = NULL;
+    }
+    
+	return argv;
 }

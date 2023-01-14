@@ -10,11 +10,11 @@ int compareLwjglVersion(char* new, char* old)
 	for (int i = 0; i < (int)strlen(new); i++)
 	{
 		if (new[i] > old[i])
-			return 0;
-		else if (new[i] < old[i])
 			return 1;
+		else if (new[i] < old[i])
+			return -1;
 	}
-	return 1;
+	return 0;
 }
 
 char* str_split(char* text, char chr, int index)
@@ -70,7 +70,7 @@ char* mc_GetLwjglVersion(cJSON* manifest)
                 if (strcmp(name, "lwjgl") == 0)
                 {
                     version = str_split(libName->valuestring, ':', 2);
-                    if (compareLwjglVersion(version, lwjglVersion) == 0)
+                    if (compareLwjglVersion(version, lwjglVersion))
                     {
                         free(lwjglVersion);
                         lwjglVersion = version;
@@ -183,7 +183,6 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             name = str_split(libName->valuestring, ':', 1);
             len_name = strlen(name);
             
-            printf("%s\n", org);
 
             version = str_split(libName->valuestring, ':', 2);
             len_version = strlen(version);
@@ -225,7 +224,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 
 				if (strcmp(lwjglVersion, version) != 0)
 				{
-					if (compareLwjglVersion(version, lwjglVersion) == 0)
+					if (compareLwjglVersion(version, lwjglVersion))
 					{
 						lwjglClasspath = realloc(lwjglClasspath, sizeof(char) * (strlen(fullpath) + 1));
 						strcpy(lwjglClasspath, fullpath);

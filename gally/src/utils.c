@@ -43,6 +43,7 @@ cJSON* json_ParseFile(char* filename)
 
     return parsed;
 }
+
 char *str_replace(char *orig, char *rep, char *with) 
 {
     char *result; // the return string
@@ -86,9 +87,7 @@ char *str_replace(char *orig, char *rep, char *with)
         tmp = strcpy(tmp, with) + len_with;
         orig += len_front + len_rep; // move to next "end of rep"
     }
-
     strcpy(tmp, orig);
-
     return result;
 }
 

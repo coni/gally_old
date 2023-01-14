@@ -12,3 +12,8 @@ curl/
 *x64/
 *.o
 *.d
+ressourcepacks/
+stats/
+logs/
+options.txt
+output-client.log

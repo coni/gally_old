@@ -119,7 +119,7 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
 
     component = mc_GetJreComponent(manifest);
     if (component == NULL)
-        return NULL;
+        component = "jre-legacy";
     jreBaseManifest = mc_GetJreMainManifest(path);
     jreManifest = mc_GetJreManifest(jreBaseManifest, component, path);
 

@@ -36,7 +36,6 @@ char* mc_DownloadLwjgl(char* lwjglVersion, char* path)
       if (tmp)
       {
         tmp = cJSON_GetObjectItemCaseSensitive(tmp, lwjglVersion);
-        printf("%s\n", lwjglVersion);
         if (tmp)
         {
             lwjglPath = malloc((strlen(path) + strlen(lwjglVersion) + 3)*sizeof(char));
