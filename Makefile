@@ -3,7 +3,7 @@
 CC			= gcc
 CPPFLAGS	= -Igally/include/
 CFLAGS 		= -Werror -Wextra -std=c11
-LDFLAGS		= -ggdb3
+LDFLAGS		=
 LDLIBS		= -lcurl
 
 EXE = main
@@ -17,7 +17,8 @@ DEP	= ${SRC:.c=.d}
 
 release: $(EXE)
 
-debug: CFLAGS += -ggdb3 -g -DDEBUG
+debug: CFLAGS += -g -DDEBUG
+debug: LDFLAGS += -ggdb3
 debug: $(EXE)
 
 $(EXE): $(OBJ)
@@ -31,7 +32,8 @@ clean:
 	$(RM) -r stats/
 	$(RM) -r resourcepacks
 	$(RM) -r logs/
-	$(RM) -r options.txt
-	$(RM) -r output-client.log
+	$(RM) options.txt
+	$(RM) output-client.log
+	$(RM) *.png
 
 # END
