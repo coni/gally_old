@@ -87,7 +87,7 @@ char* mc_GetLwjglVersion(cJSON* manifest)
 	return lwjglVersion;
 }
 
-char* mc_DownloadLibraries(cJSON *manifest, char *path)
+char** mc_DownloadLibraries(cJSON *manifest, char *path)
 {
     int isCorrectOs = 0;
 
@@ -103,10 +103,9 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
     size_t len_version = 0;
     size_t len_org = 0;
 
-	int isLwjgl = 0;
 
-	char* classpath = malloc(sizeof(char));
-	strcpy(classpath, "");
+    size_t len_classpath = 0;
+	char** classpath = malloc(sizeof(char*));
 
 	cJSON* lib = NULL;
 	cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
@@ -114,7 +113,8 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
     cJSON* tmp_i = NULL;
     cJSON* libDlInfo = NULL;
 
-	char* lwjglClasspath = "";
+    char* len_lwjglClasspath = 0;
+	char* lwjglClasspath = malloc(sizeof(char*));
 	char* lwjglVersion = "0.0.0";
 
     char* libNameFormatted = NULL;
@@ -173,16 +173,13 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             size_t len_libName = strlen(libName->valuestring);
 			libNameFormatted = NULL;
 
-
 			fullpath = NULL;
-			isLwjgl = 0;
 
             org = str_split(libName->valuestring, ':', 0);
             len_org = strlen(org);
 
             name = str_split(libName->valuestring, ':', 1);
             len_name = strlen(name);
-            
 
             version = str_split(libName->valuestring, ':', 2);
             len_version = strlen(version);
@@ -208,7 +205,6 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
                 strncat(libNameFormatted, "-", len_libNameFormatted);
                 strncat(libNameFormatted, native, len_libNameFormatted);
                 free(native);
-
             }
 
             strncat(libNameFormatted, ".jar", len_libNameFormatted);
@@ -217,33 +213,12 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
 			fullpath = realloc(fullpath, sizeof(char) * len_fullpath);
 			snprintf(fullpath, len_fullpath, "%s/%s", path, libNameFormatted);
 			
-			if (isLwjgl)
-			{
-				if (len_version >= 5)
-					version[5] = '\0';
+            classpath[len_classpath] = malloc(sizeof(char) * (strlen(fullpath) + 1));
+            strcpy(classpath[len_classpath], fullpath);
+            len_classpath++;
+            classpath = realloc(classpath, sizeof(char *) * (len_classpath  + 1));
 
-				if (strcmp(lwjglVersion, version) != 0)
-				{
-					if (compareLwjglVersion(version, lwjglVersion))
-					{
-						lwjglClasspath = realloc(lwjglClasspath, sizeof(char) * (strlen(fullpath) + 1));
-						strcpy(lwjglClasspath, fullpath);
-						strcpy(lwjglVersion, version);
-					}
-					else
-						continue;
-				}
-				lwjglClasspath = realloc(lwjglClasspath, sizeof(char) * (strlen(lwjglClasspath) + strlen(fullpath) + 1));
-				strcat(lwjglClasspath, CLASSSEPARATOR);
-				strcat(lwjglClasspath, fullpath);
-			}
-			else
-			{
-				classpath = realloc(classpath, sizeof(char *) * (strlen(classpath) + strlen(fullpath) + 1));
-				strcat(classpath, fullpath);
-				strcat(classpath, CLASSSEPARATOR);
-			}
-				// Download Librarie
+			// Download Librarie
 			libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
 			if (libDlInfo)
 			{	
@@ -272,13 +247,7 @@ char* mc_DownloadLibraries(cJSON *manifest, char *path)
             free(version);
 		}
 	}
-
-	if (strcmp(lwjglClasspath, "") != 0)
-	{
-		classpath = realloc(classpath, strlen(classpath) + strlen(lwjglClasspath) + 1);
-		strcat(classpath, lwjglClasspath);
-	}
-
+    classpath[len_classpath] = NULL;
 
 	return classpath;
 }

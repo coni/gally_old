@@ -40,7 +40,7 @@ int main()
 
     char* username = "coni";
     /* char* version = "fabric-loader-0.14.12-1.19.3"; */
-    /* char* version = "1.19.2"; */
+    char* version = "1.19.2";
     /* char* version = "1.18"; */
     /* char* version = "1.17"; */
     /* char* version = "1.16"; */
@@ -58,7 +58,7 @@ int main()
     /* char* version = "1.5"; */
     /* char* version = "1.4.2"; */
     /* char* version = "1.3.1"; */
-    char* version = "1.2.5";
+    /* char* version = "1.2.5"; */
     /* char* version = "1.1"; */
     /* char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft"; */ 
     size_t len_version = strlen(version);
@@ -106,10 +106,13 @@ int main()
 
     char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
     char* assets_index = mc_GetAssetIndex(manifest);
-    char* classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
-    size_t len_classpath = strlen(classpath) + strlen(clientPath) + 1;
-    classpath = realloc(classpath, len_classpath);
-    strncat(classpath, clientPath, len_classpath);
+    char** classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
+    /* for (int i = 0; classpath[i] != NULL; i++) */
+    /*     printf("%s\n", classpath[i]); */
+
+    /* size_t len_classpath = strlen(classpath) + strlen(clientPath) + 1; */
+    /* classpath = realloc(classpath, len_classpath); */
+    /* strncat(classpath, clientPath, len_classpath); */
 
     char* lwjglVersion = mc_GetLwjglVersion(manifest); 
     if (lwjglVersion != NULL)
@@ -126,6 +129,7 @@ int main()
         jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gameRootBin);
 
     jvmArguments.classpath = classpath;
+    jvmArguments.client = clientPath;
     gameArguments.version = version;
     gameArguments.game_directory = gameRoot;
     gameArguments.auth_player_name = username;
@@ -134,14 +138,39 @@ int main()
 
     char** javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);
-    for (int i = 0; javaArgs[i] != NULL; i++)
-        printf("%s\n", javaArgs[i]);
-    return 0;
+    char* mainclass = mc_GetMainclass(manifest);
 
-    printf("%s/bin/java ", javaPath);
-    printf("%s ", javaArgs);
-    printf("%s ", mc_GetMainclass(manifest));
-    printf("%s ", gameArgs); // PROBLEM
+    int len_command = (strlen(javaPath) + 10 + strlen(mainclass) + 1);
+    for (int i = 0; javaArgs[i] != NULL; i++)
+    {
+        for (int j = 0; javaArgs[i][j] != '\0'; j++)
+            len_command++;
+        len_command++;
+    }
+    for (int i = 0; gameArgs[i] != NULL; i++)
+    {
+        for (int j = 0; gameArgs[i][j] != '\0'; j++)
+            len_command++;
+        len_command++;
+    }
+
+    char* command = malloc(sizeof(char) * len_command);
+    snprintf(command, len_command, "%s/bin/java ", javaPath);
+    for (int i = 0; javaArgs[i] != NULL; i++)
+    {
+        strcat(command, javaArgs[i]);
+        strcat(command, " ");
+    }
+    strcat(command, mainclass);
+    strcat(command, " ");
+    for (int i = 0; gameArgs[i] != NULL; i++)
+    {
+        printf("%s\n", gameArgs[i]);
+        strcat(command, gameArgs[i]);
+        strcat(command, " ");
+    }
+    printf("%s\n", command);
+    system(command);
 
     free(lwjglVersion);
     free(gameRootBin);

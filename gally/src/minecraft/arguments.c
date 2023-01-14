@@ -8,7 +8,8 @@
 JvmArgs mc_InitJvmArgs()
 {
 	JvmArgs args;
-	args.classpath = "NULL";
+    args.client = "NULL";
+	args.classpath = NULL;
 	args.launcher_name = "gally";
 	args.natives_directory = "NULL";
 	args.launcher_version = "1.0";
@@ -82,7 +83,11 @@ char** mc_GetGameArgs(cJSON* manifest, GameArgs args)
             if (i->valuestring[j] == ' ' || i->valuestring[j] == '\0')
             {
                 argv[count] = malloc(sizeof(char) * (size+1));
-                strncpy(argv[count++], cur_i, size);
+                int k;
+                for (k = 0; k < size; k++)
+                    argv[count][k] = *(cur_i + k);
+                argv[count][k] = '\0';
+                count++;
                 cur_i = i->valuestring + j + 1;
                 size = -1;
             }
@@ -148,15 +153,46 @@ char** mc_GetGameArgs(cJSON* manifest, GameArgs args)
             argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.version_type) + 1));
             strcpy(argv[j],args.version_type);
         }
+        else if (strcmp("${user_properties}", argv[j]) == 0)
+        {
+            argv[j] = realloc(argv[j], sizeof(char) * (strlen(args.user_properties) + 1));
+            strcpy(argv[j], args.user_properties);
+        }
     }
 	return argv;
 }
 
 char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 {
+    // MAY CONFLICT WITH FABRIC
+    size_t count = 1;
+    size_t size = 0;
+    char* cp = NULL;
+    int cur;
+
+    size += strlen(args.client);
+    for (int i = 0; args.classpath[i] != NULL; i++)
+    {
+        count++;
+        for (int j = 0; args.classpath[i][j] != '\0'; j++)
+            size++;
+    }
+    cp = malloc(sizeof(char) * (size + count));
+    cur = 0;
+
+    for (int j = 0; args.client[j] != '\0'; j++)
+        cp[cur++] = args.client[j];
+    for (int i = 0; args.classpath[i] != NULL; i++)
+    {
+        cp[cur++] = CLASSSEPARATOR;
+        for (int j = 0; args.classpath[i][j] != '\0'; j++)
+            cp[cur++] = args.classpath[i][j];
+    }
+    cp[cur] = '\0';
+
     char** argv = NULL;
     int argc = 0;
-    int count = 0;
+    count = 0;
     cJSON* jvmArray = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");
     cJSON* i = NULL;
     if (jvmArray)
@@ -178,7 +214,7 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
                     else if (strstr(i->valuestring, "${launcher_version}"))
                        argv[count++] = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
                     else if (strstr(i->valuestring, "${classpath}"))
-                        argv[count++] = args.classpath;
+                        argv[count++] = cp;
                            /* argv[count++] = str_replace(i->valuestring, "${classpath}", args.classpath); */
                     else
                     {
@@ -201,9 +237,7 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
         argv[1] = malloc(sizeof(char) * tmp_size);
         strcpy(argv[1], "-cp");
 
-        argv[2] = args.classpath;
-        /* argv[2] = malloc(sizeof(char) * (strlen(args.classpath) + 1)); */
-        /* strcpy(argv[2], args.classpath); */
+        argv[2] = cp;
         argv[3] = NULL;
     }
     

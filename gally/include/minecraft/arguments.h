@@ -19,7 +19,8 @@ typedef struct {
 } GameArgs;
 
 typedef struct {
-	char* classpath;
+	char** classpath;
+    char* client;
 	char* launcher_name;
 	char* launcher_version;
 	char* natives_directory;
