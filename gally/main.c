@@ -5,11 +5,12 @@
 #include "minecraft/versions.h"
 #include "minecraft/client.h"
 #include "minecraft/mainclass.h"
-#include "minecraft/classpath.h"
+#include "minecraft/libraries.h"
 #include "minecraft/arguments.h"
 #include "minecraft/java.h"
 #include "minecraft/lwjgl.h"
 #include "minecraft/assets.h"
+#include "launcher.h"
 
 #include "utils.h"
 #include "cjson/cJSON.h"
@@ -60,60 +61,25 @@ int main()
     /* char* version = "1.3.1"; */
     /* char* version = "1.2.5"; */
     /* char* version = "1.1"; */
-    /* char* gameRoot = "C:\\Users\\coni\\AppData\\Roaming\\.minecraft"; */ 
     size_t len_version = strlen(version);
 
-    char* gameRoot = "/home/coni/.minecraft";
-    size_t len_gameRoot = strlen(gameRoot);
-
-    size_t len_gameRootVersion = len_gameRoot + 10;
-    char* gameRootVersion = malloc(len_gameRootVersion);
-    
-    size_t len_gameRootLibraries = len_gameRoot + 11;
-    char* gameRootLibraries = malloc(len_gameRootLibraries);
-
-    size_t len_gameRootRuntime = len_gameRoot + 9;
-    char* gameRootRuntime = malloc(len_gameRootRuntime);
-
-    size_t len_gameRootBin = len_gameRoot + 5;
-    char* gameRootBin = malloc(len_gameRootBin);
-
-    size_t len_gameRootAssets = len_gameRoot + 8;
-    char* gameRootAssets = malloc(len_gameRootAssets);
-
-    snprintf(gameRootAssets, len_gameRootAssets, "%s/assets", gameRoot);
-    snprintf(gameRootVersion, len_gameRootVersion, "%s/versions", gameRoot);
-    snprintf(gameRootLibraries, len_gameRootLibraries, "%s/libraries", gameRoot);
-    snprintf(gameRootRuntime, len_gameRootRuntime, "%s/runtime", gameRoot);
-    snprintf(gameRootBin, len_gameRootBin, "%s/bin", gameRoot);
+    GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
 
     JvmArgs jvmArguments = mc_InitJvmArgs();
     GameArgs gameArguments = mc_InitGameArgs();
 
-    cJSON* mainManifest = mc_GetMainManifest(gameRootVersion);
-    cJSON* manifest = mc_GetManifest(mainManifest, gameRootVersion, version);
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
 
-    /* cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gameRootAssets); */
-    /* int a = mc_DownloadAssets(manifest, gameRootAssets); */
+    /* cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath); */
+    /* int a = mc_DownloadAssets(manifest, gamePath); */
 
-    char* clientPath = mc_DownloadClient(manifest, gameRootVersion, version);
-    if (clientPath == NULL)
-    {
-        size_t len_clientPath = len_gameRootVersion + (len_version * 2) + 7;
-        clientPath = malloc(sizeof(char) * len_clientPath);
-        snprintf(clientPath, len_clientPath, "%s/%s/%s.jar", gameRootVersion, version, version);
-    }
+    char* clientPath = mc_DownloadClient(manifest, gamePath, version);
 
-    char* javaPath = mc_DownloadJre(manifest, gameRootRuntime);
+    char* javaPath = mc_DownloadJre(manifest, gamePath);
     char* assets_index = mc_GetAssetIndex(manifest);
-    char** classpath = mc_DownloadLibraries(manifest, gameRootLibraries);
-    /* for (int i = 0; classpath[i] != NULL; i++) */
-    /*     printf("%s\n", classpath[i]); */
 
-    /* size_t len_classpath = strlen(classpath) + strlen(clientPath) + 1; */
-    /* classpath = realloc(classpath, len_classpath); */
-    /* strncat(classpath, clientPath, len_classpath); */
-
+    char** classpath = mc_DownloadLibraries(manifest, gamePath);
     char* lwjglVersion = mc_GetLwjglVersion(manifest); 
     if (lwjglVersion != NULL)
     {
@@ -124,16 +90,16 @@ int main()
     }
 
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
-        jvmArguments.natives_directory = gameRoot;
+        jvmArguments.natives_directory = gamePath.root;
     else
-        jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gameRootBin);
+        jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gamePath.bin);
 
     jvmArguments.classpath = classpath;
     jvmArguments.client = clientPath;
     gameArguments.version = version;
-    gameArguments.game_directory = gameRoot;
+    gameArguments.game_directory = gamePath.root;
     gameArguments.auth_player_name = username;
-    gameArguments.assets_root = gameRootAssets;
+    gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
 
     char** javaArgs = mc_GetJvmArgs(manifest, jvmArguments);
@@ -173,14 +139,10 @@ int main()
     system(command);
 
     free(lwjglVersion);
-    free(gameRootBin);
     free(javaArgs);
     free(gameArgs);
     cJSON_Delete(manifest);
     cJSON_Delete(mainManifest);
-    free(gameRootVersion);
-    free(gameRootLibraries);
-    free(gameRootRuntime);
     free(clientPath);
     free(javaPath);
     /* free(classpath); */

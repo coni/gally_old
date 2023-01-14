@@ -1,7 +1,8 @@
 #pragma once
 
 #include "cjson/cJSON.h"
+#include "launcher.h"
 
 char*	mc_GetInherit(cJSON* manifest);
-cJSON*	mc_GetMainManifest(char* path);
-cJSON*	mc_GetManifest(cJSON* versionManifest, char* version, char* path);
+cJSON*	mc_GetMainManifest(GamePath gamePath);
+cJSON*	mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* path);

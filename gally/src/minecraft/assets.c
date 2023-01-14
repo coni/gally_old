@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 
+#include "launcher.h"
 #include "utils.h"
 #include "cjson/cJSON.h"
 
@@ -22,8 +23,9 @@ char* mc_GetAssetIndex(cJSON *manifest)
 	return assetIndex;
 }
 
-cJSON* mc_GetAssetsManifest(cJSON *manifest, char *path)
+cJSON* mc_GetAssetsManifest(cJSON *manifest, GamePath gamePath)
 {
+    char* path = gamePath.assets;
     cJSON *i = cJSON_GetObjectItemCaseSensitive(manifest, "assetIndex");
     cJSON *assetsManifest = NULL;
     size_t len_indexesPath = (strlen(path) + 9);
@@ -47,8 +49,9 @@ cJSON* mc_GetAssetsManifest(cJSON *manifest, char *path)
     return assetsManifest;
 }
 
-int mc_DownloadAssets(cJSON *manifest, char *assetsPath)
+int mc_DownloadAssets(cJSON *manifest, GamePath gamePath)
 {
+    char* assetsPath = gamePath.assets;
     size_t len_ressourceUrl = 40;
 	char ressourceUrl[] = "https://resources.download.minecraft.net";
 
@@ -59,7 +62,7 @@ int mc_DownloadAssets(cJSON *manifest, char *assetsPath)
     snprintf(path, len_path, "%s/objects/", assetsPath);
 
 	cJSON* i = NULL;
-    cJSON* assetsManifest = mc_GetAssetsManifest(manifest, assetsPath);
+    cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
     /* cJSON* assetsManifest = json_ParseFile("/home/coni/.minecraft/assets/indexes/1.19.json"); */
 	cJSON* tmp = cJSON_GetObjectItemCaseSensitive(assetsManifest, "objects");
 

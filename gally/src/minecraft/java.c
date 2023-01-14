@@ -4,7 +4,7 @@
 
 #include "cjson/cJSON.h"
 #include "utils.h"
-
+#include "launcher.h"
 
 cJSON* mc_GetJreMainManifest(char* path)
 {
@@ -21,8 +21,9 @@ cJSON* mc_GetJreMainManifest(char* path)
     return manifest;
 }
 
-cJSON* mc_GetJreManifest(cJSON* manifest, char* component, char* path)
+cJSON* mc_GetJreManifest(cJSON* manifest, char* component, GamePath gamePath)
 {
+    char* path = gamePath.runtime;
     size_t len_fullpath;
     size_t len_os;
     char* os = NULL;
@@ -84,8 +85,9 @@ char* mc_GetJreComponent(cJSON* manifest)
     return NULL;
 }
 
-char* mc_DownloadJre(cJSON* manifest, char* path)
+char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
 {
+    char* path = gamePath.runtime;
     size_t len_javaPath;
     size_t len_os;
     size_t len_fullpath;
@@ -121,7 +123,7 @@ char* mc_DownloadJre(cJSON* manifest, char* path)
     if (component == NULL)
         component = "jre-legacy";
     jreBaseManifest = mc_GetJreMainManifest(path);
-    jreManifest = mc_GetJreManifest(jreBaseManifest, component, path);
+    jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
 
 
     len_javaPath = strlen(path) + (strlen(component)*2) + strlen(os) + 5;

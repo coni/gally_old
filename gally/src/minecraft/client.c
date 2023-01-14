@@ -3,11 +3,12 @@
 #include <string.h>
 
 #include "utils.h"
+#include "launcher.h"
 #include "cjson/cJSON.h"
 
-char* mc_DownloadClient(cJSON* manifest, char* versionPath,  char* version)
+char* mc_DownloadClient(cJSON* manifest, GamePath gamePath, char* version)
 {
-
+    char* versionPath = gamePath.version;
     size_t len_path;
 	char* path = NULL;
     char* url = NULL;
@@ -35,6 +36,13 @@ char* mc_DownloadClient(cJSON* manifest, char* versionPath,  char* version)
 	}
 
     free(url);
+
+    if (path == NULL)
+    {
+        size_t len_path = strlen(gamePath.version) + (strlen(version) * 2) + 7;
+        path = malloc(sizeof(char) * len_path);
+        snprintf(path, len_path, "%s/%s/%s.jar", gamePath.version, version, version);
+    }
 
 	return path;
 }

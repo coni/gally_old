@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "utils.h"
+#include "launcher.h"
 #include "cjson/cJSON.h"
 
 int compareLwjglVersion(char* new, char* old)
@@ -87,8 +88,9 @@ char* mc_GetLwjglVersion(cJSON* manifest)
 	return lwjglVersion;
 }
 
-char** mc_DownloadLibraries(cJSON *manifest, char *path)
+char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
 {
+    char* path = gamePath.libraries;
     int isCorrectOs = 0;
 
     size_t len_path = strlen(path);

@@ -13,8 +13,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-cJSON* mc_GetMainManifest(char* path)
+#include "launcher.h"
+
+cJSON* mc_GetMainManifest(GamePath gamePath)
 {
+    char* path = gamePath.root;
     cJSON* manifest = NULL;
 	size_t len_fullpath = (strlen(path) + 25)*  sizeof(char*);
 	char* fullpath = malloc(len_fullpath);
@@ -38,8 +41,9 @@ char* mc_GetInherit(cJSON* manifest)
 	return NULL;
 }
 
-cJSON* mc_GetManifest(cJSON* versionManifest, char* path, char* version)
+cJSON* mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* version)
 {
+    char* path = gamePath.version;
     cJSON* manifest = NULL;
     cJSON* versions = NULL;
     cJSON* versionInfo  = NULL;
