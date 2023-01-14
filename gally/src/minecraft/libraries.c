@@ -131,7 +131,6 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
     cJSON* libName = NULL;
     cJSON* urlInfo = NULL;
 
-
 	if (libraries)
 	{
 		cJSON_ArrayForEach(lib, libraries)

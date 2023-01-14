@@ -135,8 +135,10 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
         {
             size_t len_game;
             for (len_game = 0; gameArgs[len_game] != NULL; len_game++);
+
             size_t len_inheritGame;
             for (len_inheritGame = 0; inheritArgument.game[len_inheritGame] != NULL; len_inheritGame++);
+
             len_inheritGame += len_game;
             inheritArgument.game = realloc(inheritArgument.game, sizeof(char*) * (len_inheritGame + 1));
             int j = 0;
@@ -186,7 +188,6 @@ char* mc_CreateCommand(CommandArguments commandArguments)
     strcat(command, " ");
     for (int i = 0; commandArguments.game[i] != NULL; i++)
     {
-        printf("%s\n", commandArguments.game[i]);
         strcat(command, commandArguments.game[i]);
         strcat(command, " ");
     }

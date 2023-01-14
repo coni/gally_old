@@ -121,7 +121,11 @@ char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
 
     component = mc_GetJreComponent(manifest);
     if (component == NULL)
-        component = "jre-legacy";
+        return NULL;
+
+    /* if (component == NULL) */
+    /*     component = "jre-legacy"; */
+
     jreBaseManifest = mc_GetJreMainManifest(path);
     jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
 
