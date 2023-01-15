@@ -32,7 +32,7 @@ int main()
     #endif
 
     char* username = "coni";
-    char* version = "fabric-loader-0.14.12-1.19.3";
+    char* version = "1.19.3";
 
     GameSettings gameSetting;
     gameSetting.username = username;
@@ -40,12 +40,7 @@ int main()
 
     GamePath gamePath = mc_DefaultGamePath(NULL);
 
-    printf("%d\n", mc_GetLibrariesSizeVersion(version, gamePath));
-    printf("%d\n", mc_GetClientSizeVersion(version, gamePath));
-    printf("%d\n", mc_GetJreSizeVersion(version, gamePath));
-    printf("%d\n", mc_GetAssetsSizeVersion(version, gamePath));
-
-    /* CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting); */
+    CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting);
     /* char* command = mc_CreateCommand(commandArguments); */
     /* printf("%s\n", command); */
 

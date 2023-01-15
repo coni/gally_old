@@ -16,6 +16,10 @@ static const char CLASSSEPARATOR = ':';
 extern char* OSNAME;
 extern char* ARCHNAME;
 
+
+extern int DOWNLOAD_CUR;
+extern int DOWNLOAD_TOTAL;
+
 #include "cjson/cJSON.h"
 
 int		system_FileExist(char *path);

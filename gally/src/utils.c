@@ -19,6 +19,9 @@
 #include "cjson/cJSON.h"
 #include "utils.h"
 
+int DOWNLOAD_CUR = 0;
+int DOWNLOAD_TOTAL = 0;
+
 cJSON* json_ParseFile(char* filename)
 {
     cJSON* parsed = NULL;

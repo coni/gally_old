@@ -12,6 +12,7 @@
 #include "minecraft/lwjgl.h"
 #include "minecraft/assets.h"
 #include "launcher.h"
+#include "utils.h"
 
 
 GamePath mc_DefaultGamePath(char* gameRoot)
@@ -64,10 +65,34 @@ GamePath mc_DefaultGamePath(char* gameRoot)
     return gamePath; 
 }
 
+int mc_GetTotalSizeVersion(char* version, GamePath gamePath)
+{
+    int total_size = 0;
+    total_size += mc_GetLibrariesSizeVersion(version, gamePath);
+    total_size += mc_GetClientSizeVersion(version, gamePath);
+    total_size += mc_GetAssetsSizeVersion(version, gamePath);
+    total_size += mc_GetJreSizeVersion(version, gamePath);
+    return total_size;
+}
+
+int mc_GetTotalSize(char* version, GamePath gamePath)
+{
+    int total_size = 0;
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+    total_size += mc_GetTotalSizeVersion(version, gamePath);
+    char* inherit =  mc_GetInherit(manifest);
+
+    total_size = inherit != NULL ? total_size + mc_GetTotalSize(inherit, gamePath) : total_size;
+    return total_size;
+}
+
 CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings)
 {
     JvmArgs jvmArgs = mc_InitJvmArgs();
     CommandArguments commandArguments = mc_GetInheritenceCommandArguments(version, gamePath, gameSettings, jvmArgs);
+    DOWNLOAD_TOTAL += mc_GetTotalSize(version, gamePath);
+    
     if (commandArguments.java == NULL)
     {
         commandArguments.java = mc_DownloadJreComponent("jre-legacy", gamePath);
