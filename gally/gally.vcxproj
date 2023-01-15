@@ -71,19 +71,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x64\include;src</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x64\include;src;include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);curl\x64\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x86\include;src</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x86\include;src;include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);curl\x86\lib;src</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x86\include;src</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x86\include;src;include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);curl\x86\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x64\include;src</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);curl\x64\include;src;include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);curl\x64\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,23 +150,29 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="src\cjson\cJSON.c" />
+    <ClCompile Include="src\launcher.c" />
     <ClCompile Include="src\minecraft\arguments.c" />
-    <ClCompile Include="src\minecraft\classpath.c" />
+    <ClCompile Include="src\minecraft\assets.c" />
     <ClCompile Include="src\minecraft\client.c" />
     <ClCompile Include="src\minecraft\java.c" />
+    <ClCompile Include="src\minecraft\libraries.c" />
+    <ClCompile Include="src\minecraft\lwjgl.c" />
     <ClCompile Include="src\minecraft\mainclass.c" />
     <ClCompile Include="src\minecraft\versions.c" />
     <ClCompile Include="src\utils.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\cjson\cJSON.h" />
-    <ClInclude Include="src\minecraft\arguments.h" />
-    <ClInclude Include="src\minecraft\classpath.h" />
-    <ClInclude Include="src\minecraft\client.h" />
-    <ClInclude Include="src\minecraft\java.h" />
-    <ClInclude Include="src\minecraft\mainclass.h" />
-    <ClInclude Include="src\minecraft\versions.h" />
-    <ClInclude Include="src\utils.h" />
+    <ClInclude Include="include\cjson\cJSON.h" />
+    <ClInclude Include="include\launcher.h" />
+    <ClInclude Include="include\minecraft\arguments.h" />
+    <ClInclude Include="include\minecraft\assets.h" />
+    <ClInclude Include="include\minecraft\client.h" />
+    <ClInclude Include="include\minecraft\java.h" />
+    <ClInclude Include="include\minecraft\libraries.h" />
+    <ClInclude Include="include\minecraft\lwjgl.h" />
+    <ClInclude Include="include\minecraft\mainclass.h" />
+    <ClInclude Include="include\minecraft\versions.h" />
+    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

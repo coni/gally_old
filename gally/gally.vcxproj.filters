@@ -14,6 +14,15 @@
     <Filter Include="Fichiers sources\src\cjson">
       <UniqueIdentifier>{979edc47-0998-4507-92b2-2a2ceaa64416}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\include">
+      <UniqueIdentifier>{c712deb8-6769-4b27-a15c-685f414a93e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\include\minecraft">
+      <UniqueIdentifier>{44b46195-86af-4098-ab45-6effbf3020ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\include\cjson">
+      <UniqueIdentifier>{9f8f7079-f1ce-4c76-961d-fa141d934199}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -34,40 +43,58 @@
     <ClCompile Include="src\minecraft\mainclass.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
-    <ClCompile Include="src\minecraft\classpath.c">
-      <Filter>Fichiers sources\src\minecraft</Filter>
-    </ClCompile>
     <ClCompile Include="src\minecraft\arguments.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
     <ClCompile Include="src\minecraft\java.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
+    <ClCompile Include="src\launcher.c">
+      <Filter>Fichiers sources\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\assets.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\libraries.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\lwjgl.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\utils.h">
-      <Filter>Fichiers sources\src</Filter>
+    <ClInclude Include="include\utils.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\versions.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\launcher.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
-    <ClInclude Include="src\cjson\cJSON.h">
-      <Filter>Fichiers sources\src\cjson</Filter>
+    <ClInclude Include="include\minecraft\arguments.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\client.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\minecraft\assets.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\mainclass.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\minecraft\client.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\classpath.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\minecraft\java.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\arguments.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\minecraft\libraries.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
-    <ClInclude Include="src\minecraft\java.h">
-      <Filter>Fichiers sources\src\minecraft</Filter>
+    <ClInclude Include="include\minecraft\lwjgl.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="include\minecraft\mainclass.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="include\minecraft\versions.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cjson\cJSON.h">
+      <Filter>Fichiers sources\include\cjson</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

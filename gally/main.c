@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
 #include "launcher.h"
 
 char* ARCHNAME;
@@ -29,6 +30,7 @@ int main()
 
     char* username = "coni";
     char* version = "fabric-loader-0.14.12-1.19.3";
+    //char* version = "1.19.3";
     /* char* version = "1.19.3-forge-44.1.5"; */
     /* char* version = "1.19.2-OptiFine_HD_U_H9"; */
     /* char* version = "1.6"; */
@@ -43,6 +45,6 @@ int main()
     char* command = mc_CreateCommand(commandArguments);
     printf("%s\n", command);
 
-    system(command);
+    system_Exec(command);
     return 0;
 }
