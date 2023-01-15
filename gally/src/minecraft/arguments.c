@@ -164,35 +164,10 @@ char** mc_GetGameArgs(cJSON* manifest, GameArgs args)
 
 char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
 {
-    // MAY CONFLICT WITH FABRIC
-    size_t count = 1;
-    size_t size = 0;
-    char* cp = NULL;
-    int cur;
-
-    size += strlen(args.client);
-    for (int i = 0; args.classpath[i] != NULL; i++)
-    {
-        count++;
-        for (int j = 0; args.classpath[i][j] != '\0'; j++)
-            size++;
-    }
-    cp = malloc(sizeof(char) * (size + count));
-    cur = 0;
-
-    for (int j = 0; args.client[j] != '\0'; j++)
-        cp[cur++] = args.client[j];
-    for (int i = 0; args.classpath[i] != NULL; i++)
-    {
-        cp[cur++] = CLASSSEPARATOR;
-        for (int j = 0; args.classpath[i][j] != '\0'; j++)
-            cp[cur++] = args.classpath[i][j];
-    }
-    cp[cur] = '\0';
 
     char** argv = NULL;
     int argc = 0;
-    count = 0;
+    int count = 0;
     cJSON* jvmArray = cJSON_GetObjectItemCaseSensitive(manifest, "arguments");
     cJSON* i = NULL;
     if (jvmArray)
@@ -214,7 +189,34 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
                     else if (strstr(i->valuestring, "${launcher_version}"))
                        argv[count++] = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
                     else if (strstr(i->valuestring, "${classpath}"))
+                    {
+                        // MAY CONFLICT WITH FABRIC
+                        size_t count_classpath = 1;
+                        size_t size = 0;
+                        char* cp = NULL;
+                        int cur;
+
+                        size += strlen(args.client);
+                        for (int i = 0; args.classpath[i] != NULL; i++)
+                        {
+                            count_classpath++;
+                            for (int j = 0; args.classpath[i][j] != '\0'; j++)
+                                size++;
+                        }
+                        cp = malloc(sizeof(char) * (size + count_classpath));
+                        cur = 0;
+
+                        for (int j = 0; args.client[j] != '\0'; j++)
+                            cp[cur++] = args.client[j];
+                        for (int i = 0; args.classpath[i] != NULL; i++)
+                        {
+                            cp[cur++] = CLASSSEPARATOR;
+                            for (int j = 0; args.classpath[i][j] != '\0'; j++)
+                                cp[cur++] = args.classpath[i][j];
+                        }
+                        cp[cur] = '\0';
                         argv[count++] = cp;
+                    }
                     else
                     {
                         /* argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1)); */
@@ -228,6 +230,32 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
     }
     else
     {
+        // MAY CONFLICT WITH FABRIC
+        size_t count_classpath = 1;
+        size_t size = 0;
+        char* cp = NULL;
+        int cur;
+
+        size += strlen(args.client);
+        for (int i = 0; args.classpath[i] != NULL; i++)
+        {
+            count_classpath++;
+            for (int j = 0; args.classpath[i][j] != '\0'; j++)
+                size++;
+        }
+        cp = malloc(sizeof(char) * (size + count_classpath));
+        cur = 0;
+
+        for (int j = 0; args.client[j] != '\0'; j++)
+            cp[cur++] = args.client[j];
+        for (int i = 0; args.classpath[i] != NULL; i++)
+        {
+            cp[cur++] = CLASSSEPARATOR;
+            for (int j = 0; args.classpath[i][j] != '\0'; j++)
+                cp[cur++] = args.classpath[i][j];
+        }
+        cp[cur] = '\0';
+
         int tmp_size = strlen(args.natives_directory) + 21;
         argv = malloc(sizeof(char*) * 4);
         argv[0] = malloc(sizeof(char) * tmp_size);

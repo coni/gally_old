@@ -50,7 +50,7 @@ GamePath mc_DefaultGamePath(char* gameRoot)
     return gamePath; 
 }
 
-CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings)
+CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, char** parentClasspath)
 {
     CommandArguments commandArguments;
 
@@ -81,6 +81,26 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     else
         jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gamePath.bin);
 
+    if (parentClasspath != NULL)
+    {
+        size_t len_parentClasspath;
+        size_t len_classpath;
+        for (len_parentClasspath = 0; parentClasspath[len_parentClasspath] != NULL; len_parentClasspath++);
+        for (len_classpath = 0; classpath[len_classpath] != NULL; len_classpath++);
+
+        len_classpath += len_parentClasspath;
+        classpath = realloc(classpath, sizeof(char*) * (len_classpath + 1));
+
+        int j = 0;
+        size_t i;
+        for (i = len_classpath - len_parentClasspath; i < len_classpath; i++)
+        {
+            classpath[i] = malloc(sizeof(char) * (strlen(parentClasspath[j]) + 1));
+            strcpy(classpath[i], parentClasspath[j++]);
+        }
+        classpath[i] = NULL;
+    }
+
     jvmArguments.classpath = classpath;
     jvmArguments.client = clientPath;
 
@@ -101,7 +121,7 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     char* inherit = mc_GetInherit(manifest);
     if (inherit)
     {
-        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings);
+        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings, classpath);
         if (commandArguments.java == NULL)
             commandArguments.java = inheritArgument.java;
 
