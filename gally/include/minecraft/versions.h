@@ -5,4 +5,4 @@
 
 char*	mc_GetInherit(cJSON* manifest);
 cJSON*	mc_GetMainManifest(GamePath gamePath);
-cJSON*	mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* path);
+cJSON*	mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* version);
