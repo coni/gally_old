@@ -50,7 +50,18 @@ GamePath mc_DefaultGamePath(char* gameRoot)
     return gamePath; 
 }
 
-CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs)
+CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings)
+{
+    JvmArgs jvmArgs = mc_InitJvmArgs();
+    CommandArguments commandArguments = mc_GetInheritenceCommandArguments(version, gamePath, gameSettings, jvmArgs);
+    if (commandArguments.java == NULL)
+    {
+        commandArguments.java = mc_DownloadJreComponent("jre-legacy", gamePath);
+    }
+    return commandArguments;
+}
+
+CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs)
 {
     CommandArguments commandArguments;
 
@@ -128,7 +139,7 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     char* inherit = mc_GetInherit(manifest);
     if (inherit)
     {
-        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings, jvmArguments);
+        CommandArguments inheritArgument = mc_GetInheritenceCommandArguments(inherit, gamePath, gameSettings, jvmArguments);
         if (commandArguments.java == NULL)
             commandArguments.java = inheritArgument.java;
 

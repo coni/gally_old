@@ -2,19 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "minecraft/versions.h"
-#include "minecraft/client.h"
-#include "minecraft/mainclass.h"
-#include "minecraft/libraries.h"
-#include "minecraft/arguments.h"
-#include "minecraft/java.h"
-#include "minecraft/lwjgl.h"
-#include "minecraft/assets.h"
 #include "launcher.h"
-
-#include "utils.h"
-#include "cjson/cJSON.h"
-
 
 char* ARCHNAME;
 char* OSNAME;
@@ -40,18 +28,17 @@ int main()
     ARCHNAME = "x64";
 
     char* username = "coni";
-    /* char* version = "fabric-loader-0.14.12-1.19.3"; */
+    char* version = "fabric-loader-0.14.12-1.19.3";
     /* char* version = "1.19.3-forge-44.1.5"; */
-    char* version = "1.19.2-OptiFine_HD_U_H9";
-    /* char* version = "1.2.5"; */
+    /* char* version = "1.19.2-OptiFine_HD_U_H9"; */
+    /* char* version = "1.6"; */
     GameSettings gameSetting;
     gameSetting.username = username;
     gameSetting.downloadAssets = 0;
 
-    JvmArgs jvmArgs = mc_InitJvmArgs();
 
     GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
-    CommandArguments commandArguments = mc_DownloadInheritence(version, gamePath, gameSetting, jvmArgs);
+    CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting);
 
     char* command = mc_CreateCommand(commandArguments);
     printf("%s\n", command);

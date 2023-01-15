@@ -17,5 +17,6 @@ typedef struct {
 #include "minecraft/arguments.h"
 
 GamePath mc_DefaultGamePath(char* gameRoot);
-CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs);
+CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs);
+CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings);
 char* mc_CreateCommand(CommandArguments commandArguments);

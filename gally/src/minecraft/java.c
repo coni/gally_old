@@ -6,8 +6,9 @@
 #include "utils.h"
 #include "launcher.h"
 
-cJSON* mc_GetJreMainManifest(char* path)
+cJSON* mc_GetJreMainManifest(GamePath gamePath)
 {
+    char* path = gamePath.runtime;
     size_t len_filename = (strlen(path) + 10);
     char* filename = malloc(len_filename * sizeof(char));
     cJSON * manifest = NULL;
@@ -85,15 +86,13 @@ char* mc_GetJreComponent(cJSON* manifest)
     return NULL;
 }
 
-char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
+char* mc_DownloadJreComponent(char* component, GamePath gamePath)
 {
     char* path = gamePath.runtime;
     size_t len_javaPath;
     size_t len_os;
     size_t len_fullpath;
     char* os = NULL;
-    char* tmpPath = NULL;
-    char* component = NULL;
     char* javaPath = NULL;
     char* filename = NULL;
     char* fullpath = NULL;
@@ -101,7 +100,10 @@ char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
     cJSON* jreManifest = NULL;
     cJSON* files = NULL;
     cJSON* element = NULL;
-    
+
+    jreBaseManifest = mc_GetJreMainManifest(gamePath);
+    jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
+
     if (strcmp(OSNAME, "windows") == 0 || (strcmp(OSNAME, "linux") == 0 && strcmp(ARCHNAME, "i386") == 0))
     {
         len_os = strlen(OSNAME) + strlen(ARCHNAME) + 2;
@@ -114,21 +116,6 @@ char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
         os = malloc(len_os * sizeof(char));
         strncpy(os, OSNAME, len_os);
     }
-
-    tmpPath = malloc((strlen(path) + 6) * sizeof(char));
-    strcpy(tmpPath, path);
-    strcat(tmpPath, "temp/");
-
-    component = mc_GetJreComponent(manifest);
-    if (component == NULL)
-        return NULL;
-
-    /* if (component == NULL) */
-    /*     component = "jre-legacy"; */
-
-    jreBaseManifest = mc_GetJreMainManifest(path);
-    jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
-
 
     len_javaPath = strlen(path) + (strlen(component)*2) + strlen(os) + 5;
     javaPath = malloc(len_javaPath * sizeof(char));
@@ -171,11 +158,14 @@ char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
             }
         }
     }
-
-    cJSON_Delete(jreBaseManifest);
-    cJSON_Delete(jreManifest);
-    free(os);
-    free(tmpPath);
-
     return javaPath;
+}
+
+char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)
+{
+    char* component = mc_GetJreComponent(manifest);
+    if (component == NULL)
+        return NULL;
+    else
+        return mc_DownloadJreComponent(component, gamePath);
 }
