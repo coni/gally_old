@@ -8,7 +8,7 @@
 JvmArgs mc_InitJvmArgs()
 {
 	JvmArgs args;
-    args.client = "NULL";
+    args.client = NULL;
 	args.classpath = NULL;
 	args.launcher_name = "gally";
 	args.natives_directory = "NULL";
@@ -162,9 +162,11 @@ char** mc_GetGameArgs(cJSON* manifest, GameArgs args)
 	return argv;
 }
 
-char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
+char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args, GameArgs gameArgs, GamePath gamePath)
 {
-
+    char* classseparator = malloc(sizeof(char)*2);
+    classseparator[0] = CLASSSEPARATOR;
+    classseparator[1] = '\0';
     char** argv = NULL;
     int argc = 0;
     int count = 0;
@@ -182,13 +184,53 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
             {
                 if (cJSON_IsString(i))
                 {
+                    int argv_null = 1;
+                    argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1));
+                    strcpy(argv[count], i->valuestring);
+
                     if (strstr(i->valuestring, "${natives_directory}"))
-                       argv[count++] = str_replace(i->valuestring, "${natives_directory}", args.natives_directory);
-                    else if (strstr(i->valuestring, "${launcher_name}"))
-                       argv[count++] = str_replace(i->valuestring, "${launcher_name}", args.launcher_name);
-                    else if (strstr(i->valuestring, "${launcher_version}"))
-                       argv[count++] = str_replace(i->valuestring, "${launcher_version}", args.launcher_version);
-                    else if (strstr(i->valuestring, "${classpath}"))
+                    {
+                        char* tmp = str_replace(argv[count], "${natives_directory}", args.natives_directory);
+                        free(argv[count]);
+                        argv[count] = tmp;
+                    }
+                    
+                    if (strstr(i->valuestring, "${launcher_name}"))
+                    {
+                       char* tmp = str_replace(argv[count], "${launcher_name}", args.launcher_name);
+                       free(argv[count]);
+                       argv[count] = tmp;
+                    }
+
+                    if (strstr(i->valuestring, "${launcher_version}"))
+                    {
+                       char* tmp = str_replace(argv[count], "${launcher_version}", args.launcher_version);
+                       free(argv[count]);
+                       argv[count] = tmp;
+                    }
+
+                    if (strstr(i->valuestring, "${version_name}"))
+                    {
+                       char* tmp = str_replace(argv[count], "${version_name}", gameArgs.version);
+                       free(argv[count]);
+                       argv[count] = tmp;
+                    }
+
+                    if (strstr(i->valuestring, "${classpath_separator}"))
+                    {
+                       char* tmp = str_replace(argv[count], "${classpath_separator}", classseparator);
+                       free(argv[count]);
+                       argv[count] = tmp;
+                    }
+
+                    if (strstr(i->valuestring, "${library_directory}"))
+                    {
+                       char* tmp = str_replace(argv[count], "${library_directory}", gamePath.libraries);
+                       free(argv[count]);
+                       argv[count] = tmp;
+                    }
+
+                    if (strstr(i->valuestring, "${classpath}"))
                     {
                         // MAY CONFLICT WITH FABRIC
                         size_t count_classpath = 1;
@@ -215,14 +257,19 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args)
                                 cp[cur++] = args.classpath[i][j];
                         }
                         cp[cur] = '\0';
-                        argv[count++] = cp;
+                        char* tmp = str_replace(argv[count], argv[count], cp);
+                        free(argv[count]);
+                        argv[count] = tmp;
                     }
-                    else
+                    
+                    if (strcmp(argv[count], i->valuestring) == 0)
                     {
-                        /* argv[count] = malloc(sizeof(char) * (strlen(i->valuestring) + 1)); */
-                        /* strcpy(argv[count++], i->valuestring); */
-                        argv[count++] = str_replace(i->valuestring, " ", "\"");
+                        char* tmp  = str_replace(argv[count], " ", "\"");
+                        free(argv[count]);
+                        argv[count] = tmp;
                     }
+
+                    count++;
                 }
             }
             argv[count] = NULL;

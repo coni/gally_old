@@ -40,17 +40,21 @@ int main()
     ARCHNAME = "x64";
 
     char* username = "coni";
-    char* version = "fabric-loader-0.14.12-1.19.3";
+    /* char* version = "fabric-loader-0.14.12-1.19.3"; */
+    /* char* version = "1.19.3-forge-44.1.5"; */
+    char* version = "1.2.5";
     GameSettings gameSetting;
     gameSetting.username = username;
     gameSetting.downloadAssets = 0;
 
+    JvmArgs jvmArgs = mc_InitJvmArgs();
+
     GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
-    CommandArguments commandArguments = mc_DownloadInheritence(version, gamePath, gameSetting, NULL);
+    CommandArguments commandArguments = mc_DownloadInheritence(version, gamePath, gameSetting, jvmArgs);
 
     char* command = mc_CreateCommand(commandArguments);
     printf("%s\n", command);
 
-    /* system(command); */
+    system(command);
     return 0;
 }

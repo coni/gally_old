@@ -1,5 +1,4 @@
 #pragma once
-#include "minecraft/arguments.h"
 
 typedef struct {
     char* assets;
@@ -15,6 +14,8 @@ typedef struct {
     char* username;
 } GameSettings;
 
+#include "minecraft/arguments.h"
+
 GamePath mc_DefaultGamePath(char* gameRoot);
-CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, char** parentClasspath);
+CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs);
 char* mc_CreateCommand(CommandArguments commandArguments);

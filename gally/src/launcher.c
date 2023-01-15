@@ -50,7 +50,7 @@ GamePath mc_DefaultGamePath(char* gameRoot)
     return gamePath; 
 }
 
-CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, char** parentClasspath)
+CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs)
 {
     CommandArguments commandArguments;
 
@@ -62,8 +62,14 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
         cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
         mc_DownloadAssets(assetsManifest, gamePath);
     }
-
-    char* clientPath = mc_DownloadClient(manifest, gamePath, version);
+    char* clientPath = NULL;
+    if (parentJvmArgs.client == NULL)
+        clientPath = mc_DownloadClient(manifest, gamePath, version);
+    else
+    {
+        clientPath = malloc(sizeof(char) * strlen(1 + (parentJvmArgs.client)));
+        strcpy(clientPath, parentJvmArgs.client);
+    }
 
     char* javaPath = mc_DownloadJre(manifest, gamePath);
     char* assets_index = mc_GetAssetIndex(manifest);
@@ -81,8 +87,9 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     else
         jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gamePath.bin);
 
-    if (parentClasspath != NULL)
+    if (parentJvmArgs.classpath)
     {
+        char** parentClasspath = parentJvmArgs.classpath;
         size_t len_parentClasspath;
         size_t len_classpath;
         for (len_parentClasspath = 0; parentClasspath[len_parentClasspath] != NULL; len_parentClasspath++);
@@ -110,7 +117,7 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
 
-    char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments);
+    char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments, gameArguments, gamePath);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);
 
     commandArguments.java = javaPath;
@@ -121,7 +128,7 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
     char* inherit = mc_GetInherit(manifest);
     if (inherit)
     {
-        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings, classpath);
+        CommandArguments inheritArgument = mc_DownloadInheritence(inherit, gamePath, gameSettings, jvmArguments);
         if (commandArguments.java == NULL)
             commandArguments.java = inheritArgument.java;
 
