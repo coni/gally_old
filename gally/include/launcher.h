@@ -10,7 +10,7 @@ typedef struct {
 } GamePath;
 
 typedef struct {
-    int downloadAssets;
+    int skipAssets;
     char* username;
 } GameSettings;
 

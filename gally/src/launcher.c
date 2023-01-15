@@ -13,8 +13,22 @@
 #include "minecraft/assets.h"
 #include "launcher.h"
 
+
 GamePath mc_DefaultGamePath(char* gameRoot)
 {
+    if (gameRoot == NULL)
+    {
+        char* app_directory = NULL;
+        #ifdef __unix__
+            app_directory = getenv("HOME");
+        #elif _WIN32
+            app_directory = getenv("APPDATA");
+        #endif
+
+        size_t len_gameRoot = strlen(app_directory) + 12;
+        gameRoot = malloc(sizeof(char) * (len_gameRoot));
+        snprintf(gameRoot, len_gameRoot, "%s/.minecraft", app_directory);
+    }
     GamePath gamePath;
 
     size_t len_gameRoot = strlen(gameRoot);
@@ -68,7 +82,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
 
-    if (gameSettings.downloadAssets)
+    if (gameSettings.skipAssets == 0)
     {
         cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
         mc_DownloadAssets(assetsManifest, gamePath);

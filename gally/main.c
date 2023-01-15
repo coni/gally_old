@@ -34,10 +34,10 @@ int main()
     /* char* version = "1.6"; */
     GameSettings gameSetting;
     gameSetting.username = username;
-    gameSetting.downloadAssets = 0;
+    gameSetting.skipAssets = 1;
 
 
-    GamePath gamePath = mc_DefaultGamePath("/home/coni/.minecraft"); 
+    GamePath gamePath = mc_DefaultGamePath(NULL); 
     CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting);
 
     char* command = mc_CreateCommand(commandArguments);
