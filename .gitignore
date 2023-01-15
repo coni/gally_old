@@ -1,7 +1,8 @@
 # IGNORE
 *Release/
 *Debug/
-curl/
+*curl/
+*config
 .vs/
 *versions/
 *.lastbuildstate
@@ -12,8 +13,8 @@ curl/
 *x64/
 *.o
 *.d
-ressourcepacks/
-stats/
-logs/
+*ressourcepacks/
+*stats/
+*logs/
 options.txt
 output-client.log

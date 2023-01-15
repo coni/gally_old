@@ -42,7 +42,6 @@ cJSON* json_ParseFile(char* filename)
 
     free(content);
 
-
     return parsed;
 }
 
@@ -123,7 +122,6 @@ int http_Download(char* url, char* filename)
             curl_easy_perform(session);
             fclose(pagefile);
         }
-
     }
 
 	curl_easy_getinfo(session, CURLINFO_RESPONSE_CODE, &http_code);
@@ -132,7 +130,6 @@ int http_Download(char* url, char* filename)
     
 	return http_code;
 }
-
 
 int system_Exec(char* command)
 {
