@@ -42,7 +42,8 @@ int main()
     char* username = "coni";
     /* char* version = "fabric-loader-0.14.12-1.19.3"; */
     /* char* version = "1.19.3-forge-44.1.5"; */
-    char* version = "1.2.5";
+    char* version = "1.19.2-OptiFine_HD_U_H9";
+    /* char* version = "1.2.5"; */
     GameSettings gameSetting;
     gameSetting.username = username;
     gameSetting.downloadAssets = 0;

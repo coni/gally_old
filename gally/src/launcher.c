@@ -135,7 +135,7 @@ CommandArguments mc_DownloadInheritence(char* version, GamePath gamePath, GameSe
         if (commandArguments.mainclass == NULL)
             commandArguments.mainclass = inheritArgument.mainclass;
 
-        if (jvmArgs[0] != NULL)
+        if (jvmArgs != NULL && jvmArgs[0] != NULL)
         {
             size_t len_inheritJvm;
             for (len_inheritJvm = 0; inheritArgument.jvm[len_inheritJvm] != NULL; len_inheritJvm++);
