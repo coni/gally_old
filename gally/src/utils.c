@@ -21,6 +21,7 @@
 
 int DOWNLOAD_CUR = 0;
 int DOWNLOAD_TOTAL = 0;
+int DOWNLOAD_TEST = 0;
 
 cJSON* json_ParseFile(char* filename)
 {
@@ -97,6 +98,18 @@ char *str_replace(char *orig, char *rep, char *with)
 
 static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
 {
+    DOWNLOAD_TEST += nmemb;
+
+    if (DOWNLOAD_TOTAL > 0)
+    {
+        unsigned long a = (unsigned long) DOWNLOAD_TEST;
+        unsigned long b = (unsigned long) DOWNLOAD_TOTAL;
+        unsigned long c = a*100/b;
+
+        printf(" loading.. %d%% ", c);
+        fflush(stdout);
+        printf("\r");
+    }
 	size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
 	return written;
 }

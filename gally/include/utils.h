@@ -16,9 +16,9 @@ static const char CLASSSEPARATOR = ':';
 extern char* OSNAME;
 extern char* ARCHNAME;
 
-
 extern int DOWNLOAD_CUR;
 extern int DOWNLOAD_TOTAL;
+extern int DOWNLOAD_TEST;
 
 #include "cjson/cJSON.h"
 

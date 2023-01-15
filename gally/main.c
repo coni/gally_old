@@ -15,21 +15,21 @@ char* OSNAME;
 
 int main()
 {
-    #ifdef __amd64__ 
-        ARCHNAME = "x64";
-    #elif _M_AMD64
-        ARCHNAME = "x64";
-    #elif  _M_IX86
-        ARCHNAME = "x86";
-    #elif i386
-        ARCHNAME = "i386";
-    #endif
+#ifdef __amd64__ 
+    ARCHNAME = "x64";
+#elif _M_AMD64
+    ARCHNAME = "x64";
+#elif  _M_IX86
+    ARCHNAME = "x86";
+#elif i386
+    ARCHNAME = "i386";
+#endif
 
-    #ifdef __unix__
-        OSNAME = "linux";
-    #elif _WIN32
-        OSNAME = "windows";
-    #endif
+#ifdef __unix__
+    OSNAME = "linux";
+#elif _WIN32
+    OSNAME = "windows";
+#endif
 
     char* username = "coni";
     char* version = "1.19.3";
