@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "minecraft/versions.h"
 #include "utils.h"
 #include "launcher.h"
 #include "cjson/cJSON.h"
@@ -93,6 +94,85 @@ char* mc_GetLwjglVersion(cJSON* manifest)
     }
 
 	return lwjglVersion;
+}
+
+
+int mc_GetLibrariesSize(cJSON* manifest)
+{
+    cJSON* libDlInfo = NULL;
+	cJSON* libraries = cJSON_GetObjectItemCaseSensitive(manifest, "libraries");
+    cJSON* tmp = NULL;
+    cJSON* tmp_i = NULL;
+    cJSON* lib = NULL;
+    int total_size = 0;
+    int isCorrectOs = 0;
+	if (libraries)
+	{
+		cJSON_ArrayForEach(lib, libraries)
+		{
+            isCorrectOs = 1;
+	        tmp = cJSON_GetObjectItemCaseSensitive(lib, "rules");
+            if (tmp)
+            {
+                isCorrectOs = 0;
+                cJSON_ArrayForEach(tmp_i, tmp)
+                {
+                    tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "os");
+                    if (tmp)
+                    {
+                        tmp = cJSON_GetObjectItemCaseSensitive(tmp, "name");
+                        if (tmp)
+                        {
+                            if (strcmp(OSNAME, tmp->valuestring) == 0)
+                            {
+                                tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "action");
+                                if (tmp)
+                                {
+                                    if (strcmp(tmp->valuestring, "disallow") == 0)
+                                        isCorrectOs = 0;
+                                    else if (strcmp(tmp->valuestring, "allow") == 0)
+                                        isCorrectOs = 1;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        tmp = cJSON_GetObjectItemCaseSensitive(tmp_i, "action");
+                        if (tmp)
+                        {
+                            if (strcmp(tmp->valuestring, "disallow") == 0)
+                                isCorrectOs = 0;
+                            else if (strcmp(tmp->valuestring, "allow") == 0)
+                                isCorrectOs = 1;
+                        }
+                    }
+                }
+            }
+            if (isCorrectOs == 0)
+                continue;
+
+			cJSON* libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
+			if (libDlInfo)
+			{	
+				libDlInfo = cJSON_GetObjectItemCaseSensitive(libDlInfo, "artifact");
+				if (libDlInfo)
+				{
+					cJSON* size = cJSON_GetObjectItemCaseSensitive(libDlInfo, "size");
+                    total_size += size->valueint;
+				}
+			}
+        }
+    }
+
+    return total_size;
+}
+
+int mc_GetLibrariesSizeVersion(char* version, GamePath gamePath)
+{
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+    return mc_GetLibrariesSize(manifest);
 }
 
 char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 
+#include "minecraft/versions.h"
 #include "launcher.h"
 #include "utils.h"
 #include "cjson/cJSON.h"
@@ -88,4 +89,29 @@ int mc_DownloadAssets(cJSON *assetsManifest, GamePath gamePath)
 
     cJSON_Delete(assetsManifest);
 	return 0;
+}
+
+int mc_GetAssetsSize(cJSON *manifest)
+{
+	cJSON* i = NULL;
+	cJSON* tmp = cJSON_GetObjectItemCaseSensitive(manifest, "objects");
+    int total_size = 0;
+	if (tmp)
+	{
+		cJSON_ArrayForEach(i, tmp)
+		{
+			cJSON *size = cJSON_GetObjectItemCaseSensitive(i, "size");
+            total_size += size->valueint;
+		}
+	}
+
+	return total_size;
+}
+
+int mc_GetAssetsSizeVersion(char* version, GamePath gamePath)
+{
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+    cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
+    return mc_GetAssetsSize(assetsManifest);
 }

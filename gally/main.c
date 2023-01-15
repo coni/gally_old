@@ -4,6 +4,9 @@
 
 #include "utils.h"
 #include "minecraft/libraries.h"
+#include "minecraft/java.h"
+#include "minecraft/client.h"
+#include "minecraft/assets.h"
 #include "minecraft/versions.h"
 #include "launcher.h"
 
@@ -28,25 +31,24 @@ int main()
         OSNAME = "windows";
     #endif
 
-    ARCHNAME = "x64";
-
     char* username = "coni";
-    char* version = "1.18";
-    /* char* version = "1.19.3-forge-44.1.5"; */
-    /* char* version = "1.19.2-OptiFine_HD_U_H9"; */
-    /* char* version = "1.6"; */
-    //char* version = "1.0";
+    char* version = "fabric-loader-0.14.12-1.19.3";
 
     GameSettings gameSetting;
     gameSetting.username = username;
     gameSetting.skipAssets = 1;
 
     GamePath gamePath = mc_DefaultGamePath(NULL);
-    CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting);
 
-    char* command = mc_CreateCommand(commandArguments);
-    printf("%s\n", command);
+    printf("%d\n", mc_GetLibrariesSizeVersion(version, gamePath));
+    printf("%d\n", mc_GetClientSizeVersion(version, gamePath));
+    printf("%d\n", mc_GetJreSizeVersion(version, gamePath));
+    printf("%d\n", mc_GetAssetsSizeVersion(version, gamePath));
 
-    system_Exec(command);
+    /* CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting); */
+    /* char* command = mc_CreateCommand(commandArguments); */
+    /* printf("%s\n", command); */
+
+    /* system_Exec(command); */
     return 0;
 }

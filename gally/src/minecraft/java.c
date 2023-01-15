@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "minecraft/versions.h"
 #include "cjson/cJSON.h"
 #include "utils.h"
 #include "launcher.h"
@@ -159,6 +160,40 @@ char* mc_DownloadJreComponent(char* component, GamePath gamePath)
         }
     }
     return javaPath;
+}
+
+int mc_GetJreSize(cJSON* jreManifest)
+{
+    int total_size = 0;
+    cJSON* files = cJSON_GetObjectItemCaseSensitive(jreManifest, "files");
+    cJSON* element = NULL;
+    if (files)
+    {
+        cJSON_ArrayForEach(element, files)
+        {
+            cJSON* downloads = cJSON_GetObjectItemCaseSensitive(element, "downloads");
+
+            downloads = cJSON_GetObjectItemCaseSensitive(downloads, "raw");
+            cJSON * size = cJSON_GetObjectItemCaseSensitive(downloads,"size");
+            if (size)
+                total_size += size->valueint;
+        }
+    }
+    return total_size;
+}
+
+int mc_GetJreSizeVersion(char* version, GamePath gamePath)
+{
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+    char* component = mc_GetJreComponent(manifest);
+    if (component)
+    {
+        cJSON* jreBaseManifest = mc_GetJreMainManifest(gamePath);
+        cJSON* jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
+        return mc_GetJreSize(jreManifest);
+    }
+    return 0;
 }
 
 char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)

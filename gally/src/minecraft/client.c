@@ -3,8 +3,29 @@
 #include <string.h>
 
 #include "utils.h"
+#include "minecraft/versions.h"
 #include "launcher.h"
 #include "cjson/cJSON.h"
+
+int mc_GetClientSize(cJSON* manifest)
+{
+    int total_size = 0;
+	cJSON* tmp = cJSON_GetObjectItemCaseSensitive(manifest, "downloads");
+	if (tmp)
+	{
+		tmp = cJSON_GetObjectItemCaseSensitive(tmp, "client");
+        cJSON* size = cJSON_GetObjectItemCaseSensitive(tmp, "size");
+        total_size += size->valueint;
+    }
+    return total_size;
+}
+
+int mc_GetClientSizeVersion(char* version, GamePath gamePath)
+{
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+    return mc_GetClientSize(manifest);
+}
 
 char* mc_DownloadClient(cJSON* manifest, GamePath gamePath, char* version)
 {
