@@ -49,6 +49,20 @@ cJSON* json_ParseFile(char* filename)
     return parsed;
 }
 
+char* str_cpyrange(char* src, int start, int size)
+{
+    char* out = malloc(sizeof(char) * (size+1));
+    int i;
+    for (i = 0; i < size; i++)
+    {
+        if (src[start+i] == '\0')
+            break;
+        out[i] = src[start+i];
+    }
+    out[i] = '\0';
+    return out;
+}
+
 char *str_replace(char *orig, char *rep, char *with) 
 {
     char *result; // the return string

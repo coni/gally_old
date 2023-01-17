@@ -34,4 +34,6 @@ int		http_Download(char *url, char *filename);
 
 cJSON	*json_ParseFile(char *filename);
 
-char *str_replace(char *orig, char *rep, char *with) ;
+char *str_replace(char *orig, char *rep, char *with);
+char* str_split(char* text, char chr, int index);
+char* str_cpyrange(char* src, int start, int size);

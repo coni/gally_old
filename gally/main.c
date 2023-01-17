@@ -9,11 +9,12 @@
 #include "minecraft/assets.h"
 #include "minecraft/versions.h"
 #include "launcher.h"
+#include "getopt.h"
 
 char* ARCHNAME;
 char* OSNAME;
 
-int main()
+int main(int argc, char* argv[])
 {
 #ifdef __amd64__ 
     ARCHNAME = "x64";
@@ -31,19 +32,21 @@ int main()
     OSNAME = "windows";
 #endif
 
-    char* username = "coni";
-    char* version = "1.19.3";
+	ArgOpt argopt = getopt_Parse(argc, argv);
+    /* GameSettings gameSetting; */
+    /* if (ai.username_arg) */
+    /*     gameSetting.username = ai.username_arg; */
+    /* else */
+    /*     gameSetting.username = "gally"; */
+    /* gameSetting.skipAssets = 1; */
 
-    GameSettings gameSetting;
-    gameSetting.username = username;
-    gameSetting.skipAssets = 1;
+    /* GamePath gamePath = mc_DefaultGamePath(NULL); */
 
-    GamePath gamePath = mc_DefaultGamePath(NULL);
-
-    CommandArguments commandArguments = mc_GetCommandArguments(version, gamePath, gameSetting);
+    /* CommandArguments commandArguments = mc_GetCommandArguments(ai.version_arg, gamePath, gameSetting); */
     /* char* command = mc_CreateCommand(commandArguments); */
     /* printf("%s\n", command); */
 
     /* system_Exec(command); */
+    /* free(command); */
     return 0;
 }
