@@ -15,6 +15,8 @@ ArgOpt getopt_Parse(int argc, char* argv[])
     };
 
     int i = 1;
+    Opt* ptr = NULL; // Point to the current element in the option list
+    Opt* end_ptr = options + sizeof(options)/sizeof(options[0]);
     while (i < argc)
     {
         char* option_name = NULL;
@@ -24,6 +26,7 @@ ArgOpt getopt_Parse(int argc, char* argv[])
         int skip = 0;
         int unknown_type = 1;
         int delimiter = -1;
+        ptr = NULL; // Point to the current element in the option list
 
         for (; argv[i][len_arg] != '\0'; len_arg++);
         if (len_arg > 1)
@@ -42,50 +45,69 @@ ArgOpt getopt_Parse(int argc, char* argv[])
             // using flag_type as the beginninig of the cursor
             for (delimiter = flag_type; argv[i][delimiter] != '=' && delimiter < len_arg; delimiter++);
             option_name = str_cpyrange(argv[i], flag_type, delimiter-flag_type);
-            Opt* end_ptr = options + sizeof(options)/sizeof(options[0]);
-            for (Opt* ptr = options; ptr < end_ptr; ptr++)
+            for (ptr = options; ptr < end_ptr && unknown_type == 1; ptr++)
             { 
                 if (flag_type == 1 && strcmp(ptr->shortname, option_name) == 0 ||
                         flag_type == 2 && strcmp(ptr->longname, option_name) == 0)
                 {
                     unknown_type = 0;
                     // COMPARER LES SHORTNAME ET LONGNAME
-                    if (ptr->type == 1 && argv[i][delimiter] == '=')
-                        printf("WAS GIVEN A VALUE FOR A FLAG TYPE\n");
-                    else if (ptr->type == 0)
+                    if (argv[i][delimiter] == '=') // Voluntary give every option with an equal a value
                     {
-                        if (argv[i][delimiter] == '=')
-                            value = str_cpyrange(argv[i], delimiter+1, len_arg-delimiter-1);
-                        else
-                        {
-                            if (i + 1 < argc)
-                                value = argv[i+1];
-                            skip += 1;
-                        }
+                        char* tmp_value = (argv[i]+delimiter+1);
+                        value = tmp_value;
                     }
+                    else if (ptr->type == 0 && value == NULL)
+                    {
+                        if (i + 1 < argc)
+                            value = argv[i+1];
+                        skip += 1;
+                    }
+                    ptr--;
                 }
             }
         }
         
-
         if (flag_type > 0)
         {
             if (unknown_type)
-                printf("UNKNOWN %s\n", option_name);
+                printf("UNKNOWN PARAMETER %s\n", option_name);
             else
             {
-                printf("OPTION %s\n", option_name); 
-
-                if (value != NULL)
-                    printf("VALUE %s\n", value);
+                if (ptr->type == 0)
+                {
+                    if (value == NULL)
+                        printf("MISSING PARAMETER FOR %s\n", option_name);
+                    else
+                    {
+                        char** tmp_value = ptr->value;
+                        *tmp_value = value;
+                    }
+                }
+                else
+                {
+                    if (value != NULL)
+                        printf("VALUE WAS GIVEN FOR TYPE FLAG\n");
+                    else
+                    {
+                        int* tmp_value = ptr->value;
+                        *tmp_value = 1;
+                    }
+                }
             }
+            free(option_name);
         }
         else
-            printf("NOFLAG %s\n", argv[i]);
+            printf("NO FLAG %s\n", argv[i]);
 
-        if (delimiter > -1 && argv[i][delimiter] == '=')
-            free(value);
+
         i += 1 + skip;
+    }
+    for (ptr = options; ptr < end_ptr; ptr++)
+    {
+        char** tmp_val = ptr->value;
+        if (ptr->required && *tmp_val == NULL)
+            printf("MISSING REQUIRED PARAMETERS --%s [-%s]\n", ptr->longname, ptr->shortname);
     }
     return argopt;
 }
