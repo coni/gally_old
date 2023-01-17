@@ -21,6 +21,7 @@ ArgOpt getopt_Parse(int argc, char* argv[])
         int flag_type = 0; // default = 0,  short = 1, long = 2
         char* value = NULL;
         int len_arg = 0;
+        int skip = 0;
         int unknown_type = 1;
         int delimiter = -1;
 
@@ -51,14 +52,15 @@ ArgOpt getopt_Parse(int argc, char* argv[])
                     // COMPARER LES SHORTNAME ET LONGNAME
                     if (ptr->type == 1 && argv[i][delimiter] == '=')
                         printf("WAS GIVEN A VALUE FOR A FLAG TYPE\n");
-                    else
+                    else if (ptr->type == 0)
                     {
                         if (argv[i][delimiter] == '=')
                             value = str_cpyrange(argv[i], delimiter+1, len_arg-delimiter-1);
                         else
                         {
                             if (i + 1 < argc)
-                                value = argv[i+++1];
+                                value = argv[i+1];
+                            skip += 1;
                         }
                     }
                 }
@@ -83,7 +85,7 @@ ArgOpt getopt_Parse(int argc, char* argv[])
 
         if (delimiter > -1 && argv[i][delimiter] == '=')
             free(value);
-        i++;
+        i += 1 + skip;
     }
     return argopt;
 }
