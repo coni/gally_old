@@ -1,5 +1,5 @@
 #include "cjson/cJSON.h"
-#include <curl/curl.h>
+#include "curl/curl.h"
 #include "launcher.h"
 
 int compareLwjglVersion(char* new, char* old);

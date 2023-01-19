@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="src\cjson\cJSON.c" />
+    <ClCompile Include="src\getopt.c" />
     <ClCompile Include="src\launcher.c" />
     <ClCompile Include="src\minecraft\arguments.c" />
     <ClCompile Include="src\minecraft\assets.c" />
@@ -158,11 +159,13 @@
     <ClCompile Include="src\minecraft\libraries.c" />
     <ClCompile Include="src\minecraft\lwjgl.c" />
     <ClCompile Include="src\minecraft\mainclass.c" />
+    <ClCompile Include="src\minecraft\microsoftAuthenfication.c" />
     <ClCompile Include="src\minecraft\versions.c" />
     <ClCompile Include="src\utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cjson\cJSON.h" />
+    <ClInclude Include="include\getopt.h" />
     <ClInclude Include="include\launcher.h" />
     <ClInclude Include="include\minecraft\arguments.h" />
     <ClInclude Include="include\minecraft\assets.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="include\minecraft\libraries.h" />
     <ClInclude Include="include\minecraft\lwjgl.h" />
     <ClInclude Include="include\minecraft\mainclass.h" />
+    <ClInclude Include="include\minecraft\microsoftAuthentification.h" />
     <ClInclude Include="include\minecraft\versions.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>

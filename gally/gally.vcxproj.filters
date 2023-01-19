@@ -61,6 +61,12 @@
     <ClCompile Include="src\minecraft\lwjgl.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
+    <ClCompile Include="src\getopt.c">
+      <Filter>Fichiers sources\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\minecraft\microsoftAuthenfication.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\utils.h">
@@ -95,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="include\cjson\cJSON.h">
       <Filter>Fichiers sources\include\cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\minecraft\microsoftAuthentification.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
+    </ClInclude>
+    <ClInclude Include="include\getopt.h">
+      <Filter>Fichiers sources\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

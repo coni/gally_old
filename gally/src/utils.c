@@ -49,7 +49,7 @@ int msleep(long msec)
     } while (res && errno == EINTR);
 
     return res;
-#elif WIN32
+#elif _WIN32
     Sleep(msec);
 #endif
 }
