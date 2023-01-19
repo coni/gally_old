@@ -110,7 +110,7 @@ char *str_replace(char *orig, char *rep, char *with)
     return result;
 }
 
-static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
+static size_t write_Data(void* ptr, size_t size, size_t nmemb, void* stream)
 {
     DOWNLOAD_TEST += nmemb;
 
@@ -128,6 +128,29 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
 	return written;
 }
 
+struct MemoryStruct {
+  char *memory;
+  size_t size;
+};
+
+static size_t write_Memory(void *contents, size_t size, size_t nmemb, void *userp)
+{
+  size_t realsize = size * nmemb;
+  struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+  
+  char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+  if(!ptr) {
+    printf("not enough memory (realloc returned NULL)\n");
+    return 0;
+  }
+  mem->memory = ptr;
+  memcpy(&(mem->memory[mem->size]), contents, realsize);
+  mem->size += realsize;
+  mem->memory[mem->size] = 0;
+  return realsize;
+}
+
+
 int http_Download(char* url, char* filename)
 {
     int http_code = 0;
@@ -142,7 +165,7 @@ int http_Download(char* url, char* filename)
 
         curl_easy_setopt(session, CURLOPT_URL, url);
         curl_easy_setopt(session, CURLOPT_NOPROGRESS, 1L);
-        curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_Data);
         curl_easy_setopt(session, CURLOPT_FOLLOWLOCATION, 1);
 
         system_Mkdir(filename);
@@ -160,6 +183,34 @@ int http_Download(char* url, char* filename)
     
 	return http_code;
 }
+
+char* http_get(char* url)
+{
+    struct MemoryStruct chunk;
+    char* response = NULL;
+
+	chunk.memory = malloc(1);
+	chunk.size = 0;
+
+
+    curl_global_init(CURL_GLOBAL_ALL);
+	CURL* session = curl_easy_init();
+
+    curl_easy_setopt(session, CURLOPT_URL, url);
+    curl_easy_setopt(session, CURLOPT_NOPROGRESS, 1L);
+    curl_easy_setopt(session, CURLOPT_FOLLOWLOCATION, 1);
+
+    curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_Memory);
+    curl_easy_setopt(session, CURLOPT_WRITEDATA, (void *) &chunk);
+    curl_easy_setopt(session, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+    curl_easy_perform(session);
+	curl_easy_cleanup(session);
+    curl_global_cleanup();
+
+    response = chunk.memory;
+    return response;
+} 
 
 int system_Exec(char* command)
 {
@@ -249,3 +300,5 @@ int system_FileExist(char* path)
 {
 	return access(path, F_OK);
 }
+
+

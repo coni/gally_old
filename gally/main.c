@@ -32,7 +32,8 @@ int main(int argc, char* argv[])
     OSNAME = "windows";
 #endif
 
-	ArgOpt argopt = getopt_Parse(argc, argv);
+    ArgOpt argopt = getopt_Parse(argc, argv);
+    printf("%s\n", http_get("https://example.com"));
     /* GameSettings gameSetting; */
     /* if (ai.username_arg) */
     /*     gameSetting.username = ai.username_arg; */

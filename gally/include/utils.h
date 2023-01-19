@@ -31,6 +31,7 @@ int		system_MakeExec(char* file);
 #endif
 
 int		http_Download(char *url, char *filename);
+char* http_get(char* url);
 
 cJSON	*json_ParseFile(char *filename);
 
