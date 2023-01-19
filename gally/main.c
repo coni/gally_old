@@ -39,20 +39,27 @@ int main(int argc, char* argv[])
     char* msToken = accessToken();
     char* xbToken = xblToken(msToken);
 
-    /* GameSettings gameSetting; */
-    /* if (ai.username_arg) */
-    /*     gameSetting.username = ai.username_arg; */
-    /* else */
-    /*     gameSetting.username = "gally"; */
-    /* gameSetting.skipAssets = 1; */
+    char* xsts = NULL;
+    char* uhs = NULL;
 
-    /* GamePath gamePath = mc_DefaultGamePath(NULL); */
+    xstsToken(xbToken, &xsts, &uhs);
 
-    /* CommandArguments commandArguments = mc_GetCommandArguments(ai.version_arg, gamePath, gameSetting); */
-    /* char* command = mc_CreateCommand(commandArguments); */
-    /* printf("%s\n", command); */
+    GameSettings gameSetting;
+    if (argopt.username)
+        gameSetting.username = argopt.username;
+    else
+        gameSetting.username = "gally";
 
-    /* system_Exec(command); */
-    /* free(command); */
+    gameSetting.token = mcToken(xsts, uhs);
+    gameSetting.skipAssets = 1;
+
+    GamePath gamePath = mc_DefaultGamePath(NULL);
+
+    CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
+    char* command = mc_CreateCommand(commandArguments);
+    printf("%s\n", command);
+
+    system_Exec(command);
+    free(command);
     return 0;
 }

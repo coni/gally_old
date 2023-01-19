@@ -11,6 +11,7 @@
 #include "minecraft/java.h"
 #include "minecraft/lwjgl.h"
 #include "minecraft/assets.h"
+#include "minecraft/microsoftAuthentification.h"
 #include "launcher.h"
 #include "utils.h"
 
@@ -132,6 +133,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
 
     JvmArgs jvmArguments = mc_InitJvmArgs();
     GameArgs gameArguments = mc_InitGameArgs();
+    gameArguments.auth_access_token = gameSettings.token;
 
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
         jvmArguments.natives_directory = gamePath.root;
@@ -167,6 +169,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     gameArguments.auth_player_name = gameSettings.username;
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
+    gameArguments.auth_uuid = mc_GetUUID(gameArguments.auth_player_name);
 
     char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments, gameArguments, gamePath);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);

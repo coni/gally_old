@@ -12,6 +12,7 @@ typedef struct {
 typedef struct {
     int skipAssets;
     char* username;
+    char* token;
 } GameSettings;
 
 #include "minecraft/arguments.h"

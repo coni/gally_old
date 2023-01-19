@@ -9,7 +9,7 @@ ArgOpt getopt_Parse(int argc, char* argv[])
     ArgOpt argopt = {NULL, NULL, 0};
     Opt options[] = {
        /* value                 shortname   longname        shortname   type    required    description */
-        { &argopt.version,      "v",        "version",        0,      0,          "Specify the version of the game" },
+        { &argopt.version,      "v",        "version",        0,      1,          "Specify the version of the game" },
         { &argopt.username,     "u",        "username",        0,      0,          "Specify the username in-game" },
         { &argopt.skip_assets,  "sa",       "skip_assets",       1,      0,          "Don't download assets" },
     };
