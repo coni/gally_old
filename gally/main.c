@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "utils.h"
 #include "minecraft/libraries.h"
@@ -8,6 +9,7 @@
 #include "minecraft/client.h"
 #include "minecraft/assets.h"
 #include "minecraft/versions.h"
+#include "minecraft/microsoftAuthentification.h"
 #include "launcher.h"
 #include "getopt.h"
 
@@ -33,7 +35,9 @@ int main(int argc, char* argv[])
 #endif
 
     ArgOpt argopt = getopt_Parse(argc, argv);
-    printf("%s\n", http_get("https://example.com"));
+        
+    char* token = accessToken();
+
     /* GameSettings gameSetting; */
     /* if (ai.username_arg) */
     /*     gameSetting.username = ai.username_arg; */
