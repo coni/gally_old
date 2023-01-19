@@ -36,7 +36,8 @@ int main(int argc, char* argv[])
 
     ArgOpt argopt = getopt_Parse(argc, argv);
         
-    char* token = accessToken();
+    char* msToken = accessToken();
+    char* xbToken = xblToken(msToken);
 
     /* GameSettings gameSetting; */
     /* if (ai.username_arg) */

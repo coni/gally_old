@@ -249,7 +249,7 @@ http_Response http_Get(char* url)
     return response;
 } 
 
-http_Response http_Post(char* url, char* data)
+http_Response http_Post(char* url, char* data, char* content_type)
 {
     http_Response response = {0, NULL};
     struct MemoryStruct chunk;
@@ -267,6 +267,9 @@ http_Response http_Post(char* url, char* data)
     curl_easy_setopt(session, CURLOPT_WRITEDATA, (void *) &chunk);
     curl_easy_setopt(session, CURLOPT_USERAGENT, "libcurl-agent/1.0");
     curl_easy_setopt(session, CURLOPT_POSTFIELDS, data);
+    struct curl_slist *hs=NULL;
+	hs = curl_slist_append(hs, content_type);
+	curl_easy_setopt(session, CURLOPT_HTTPHEADER, hs);
 
     curl_easy_getinfo(session, CURLINFO_RESPONSE_CODE, &response.code);
     curl_easy_perform(session);

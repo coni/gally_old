@@ -39,7 +39,7 @@ int		system_MakeExec(char* file);
 int		http_Download(char *url, char *filename);
 /* char* http_get(char* url); */
 http_Response http_Get(char* url);
-http_Response http_Post(char* url, char* data);
+http_Response http_Post(char* url, char* data, char* content_type);
 void http_FreeResponse(http_Response response);
 
 cJSON	*json_ParseFile(char *filename);
