@@ -7,12 +7,12 @@
 
 ArgOpt argopt = {NULL, NULL, 0, 0, 0};
 Opt options[] = {
-   /* value                 shortname   longname        type    required    description */
-    { &argopt.version,      "v",        "version",      0,      1,          "Specify the version of the game" },
-    { &argopt.username,     "u",        "username",     0,      0,          "Specify the username in-game" },
-    { &argopt.skip_assets,  "sa",       "skip-assets",  1,      0,          "Don't download assets" },
+   /* value                     shortname   longname        type    required    description */
+    { &argopt.version,          "v",    "version",      0,      1,          "Specify the version of the game" },
+    { &argopt.username,         "u",    "username",     0,      0,          "Specify the username in-game" },
+    { &argopt.skip_assets,      "sa",   "skip-assets",  1,      0,          "Don't download assets" },
     { &argopt.login_microsoft,  "lm",   "login-microsoft",  1,      0,          "Login into a Microsoft Account" },
-    { &argopt.list_installed,  "li",   "list-installed",  1,      0,          "Show installed version of Minecraft" },
+    { &argopt.list_installed,   "li",   "list-installed",  1,      0,          "Show installed version of Minecraft" },
 };
 
 void getopt_CheckRequired(ArgOpt argopt)

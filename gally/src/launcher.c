@@ -6,6 +6,7 @@
 
 #include "minecraft/versions.h"
 #include "minecraft/client.h"
+#include "minecraft/profil.h"
 #include "minecraft/mainclass.h"
 #include "minecraft/libraries.h"
 #include "minecraft/arguments.h"
@@ -131,6 +132,9 @@ CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSe
 {
     if (mc_DoesVersionExist(version, gamePath) == 0)
         errx(1, "The version %s does not exist", version);
+    else if (mc_IsUsernameCorrect(gameSettings.username) == 0)
+        errx(1, "The username %s is incorrect", gameSettings.username);
+
     DOWNLOAD_TOTAL = mc_GetTotalSize(version, gamePath, gameSettings);
     JvmArgs jvmArgs = mc_InitJvmArgs();
     CommandArguments commandArguments = mc_GetInheritenceCommandArguments(version, gamePath, gameSettings, jvmArgs);
