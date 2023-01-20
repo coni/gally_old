@@ -63,6 +63,8 @@ cJSON* mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* version)
     snprintf(fullpath, len_fullpath, "%s/%s/%s.json", path, version, version);
 
     versions = cJSON_GetObjectItemCaseSensitive(versionManifest, "versions");
+    if (versions == NULL)
+        return NULL;
     cJSON_ArrayForEach(versionInfo, versions)
     {
         id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
@@ -79,3 +81,41 @@ cJSON* mc_GetManifest(cJSON* versionManifest, GamePath gamePath, char* version)
 
     return manifest;
 }
+
+int mc_DoesVersionExist(char* version, GamePath gamePath)
+{
+    int exist = 0;
+    cJSON* id = NULL;
+    cJSON* versionInfo = NULL;
+    size_t len_filepath = (strlen(gamePath.version) + (strlen(version) * 2) + 8);
+    char* filepath = malloc(sizeof(char) * len_filepath);
+    snprintf(filepath, len_filepath, "%s/%s/%s.json", gamePath.version, version, version);
+    if (system_FileExist(filepath) == 0)
+    {
+        free(filepath);
+        return 1;
+    }
+    
+    cJSON* mainManifest = mc_GetMainManifest(gamePath);
+    cJSON* versions = cJSON_GetObjectItemCaseSensitive(mainManifest, "versions");
+    if (versions == NULL)
+    {
+        cJSON_free(mainManifest);
+        return 0;
+    }
+
+    cJSON_ArrayForEach(versionInfo, versions)
+    {
+        id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
+        if (strcmp(id->valuestring,version) == 0)
+        {
+            exist = 1;
+            break;
+        }
+    }
+
+    free(filepath);
+    free(mainManifest);
+    return exist;
+}
+

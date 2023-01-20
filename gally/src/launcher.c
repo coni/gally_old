@@ -50,7 +50,6 @@ char* mc_AuthentificationMicrosoft()
     mctoken = tmp_i->valuestring;
 
     // PROMPT TO ASK IF YOU WANT TO SAVE THE CREDENTIAL
-
     return mctoken;
 }
 
@@ -173,7 +172,6 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     GameArgs gameArguments = mc_InitGameArgs();
     gameArguments.auth_access_token = gameSettings.token;
 
-    printf("hihi\n");
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
         jvmArguments.natives_directory = gamePath.root;
     else
@@ -199,7 +197,6 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
         }
         classpath[i] = NULL;
     }
-    printf("hihi\n");
 
     jvmArguments.classpath = classpath;
     jvmArguments.client = clientPath;
