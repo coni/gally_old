@@ -33,6 +33,23 @@ cJSON* mc_GetMainManifest(GamePath gamePath)
 	return manifest;
 }
 
+cJSON* mc_RefreshMainManifest(GamePath gamePath)
+{
+    char* path = gamePath.root;
+	size_t len_fullpath = (strlen(path) + 25)*  sizeof(char*);
+	char* fullpath = malloc(len_fullpath);
+
+	if (fullpath == NULL)
+        system_Error(1, "Could not allocate memory");
+
+    snprintf(fullpath, len_fullpath, "%s/version_manifest_v2.json", path);
+    if (system_FileExist(fullpath))
+        remove(fullpath);
+    free(fullpath);
+
+    return mc_GetMainManifest(gamePath);
+}
+
 char* mc_GetInherit(cJSON* manifest)
 {
     char* version = NULL;
@@ -90,6 +107,7 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
     size_t len_filepath = (strlen(gamePath.version) + (strlen(version) * 2) + 8);
     char* filepath = malloc(sizeof(char) * len_filepath);
     snprintf(filepath, len_filepath, "%s/%s/%s.json", gamePath.version, version, version);
+
     if (system_FileExist(filepath) == 0)
     {
         free(filepath);
@@ -97,25 +115,32 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
     }
     
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
-    cJSON* versions = cJSON_GetObjectItemCaseSensitive(mainManifest, "versions");
-    if (versions == NULL)
+    for (int i = 0; i < 2; i++)
     {
-        cJSON_free(mainManifest);
-        return 0;
-    }
-
-    cJSON_ArrayForEach(versionInfo, versions)
-    {
-        id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
-        if (strcmp(id->valuestring,version) == 0)
+        cJSON* versions = cJSON_GetObjectItemCaseSensitive(mainManifest, "versions");
+        if (versions == NULL)
         {
-            exist = 1;
-            break;
+            cJSON_free(mainManifest);
+            return 0;
+        }
+
+        cJSON_ArrayForEach(versionInfo, versions)
+        {
+            id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
+            if (strcmp(id->valuestring,version) == 0)
+            {
+                exist = 1;
+                break;
+            }
+        }
+        if (exist == 0 && i == 0)
+        {
+            cJSON_free(mainManifest);
+            mainManifest = mc_RefreshMainManifest(gamePath);
         }
     }
 
     free(filepath);
-    free(mainManifest);
+    cJSON_free(mainManifest);
     return exist;
 }
-
