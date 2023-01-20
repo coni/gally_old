@@ -172,7 +172,7 @@ void mc_ListInstalledVersion(GamePath gamePath)
                 char* filename = malloc(sizeof(char) * len_filename);
                 snprintf(filename, len_filename, "%s/%s.json", fullpath, dir->d_name);
                 if (system_FileExist(filename) == 0)
-                    printf("\"%s\" ", dir->d_name); 
+                    printf("%s  ", dir->d_name); 
             }
             free(fullpath);
         }
