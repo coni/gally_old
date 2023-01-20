@@ -68,6 +68,14 @@ int msleep(long msec)
 #endif
 }
 
+int system_IsFile(char* path)
+{
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
+}
+
+
 cJSON* json_ParseFile(char* filename)
 {
     cJSON* parsed = NULL;

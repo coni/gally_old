@@ -13,6 +13,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <dirent.h> 
+ #ifdef _WIN32
+#include <direct.h>
+#elif defined __linux__
+#include <sys/stat.h>
+#endif
+
 #include "launcher.h"
 
 cJSON* mc_GetMainManifest(GamePath gamePath)
@@ -143,4 +150,32 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
     free(filepath);
     cJSON_free(mainManifest);
     return exist;
+}
+
+void mc_ListInstalledVersion(GamePath gamePath)
+{
+    char* path = gamePath.version;
+	DIR *d;
+    struct dirent *dir;
+    d = opendir(path);
+
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+       {
+            size_t len_fullpath = strlen(path) + strlen(dir->d_name) + 2;
+            char* fullpath = malloc(sizeof(char) * (len_fullpath));
+            snprintf(fullpath, len_fullpath, "%s/%s", path, dir->d_name);
+            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && system_IsFile(fullpath) == 0)
+            {
+                size_t len_filename = len_fullpath + strlen(dir->d_name) + 7;
+                char* filename = malloc(sizeof(char) * len_filename);
+                snprintf(filename, len_filename, "%s/%s.json", fullpath, dir->d_name);
+                if (system_FileExist(filename) == 0)
+                    printf("\"%s\" ", dir->d_name); 
+            }
+            free(fullpath);
+        }
+        closedir(d);
+    }
 }

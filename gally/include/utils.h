@@ -32,6 +32,7 @@ int		system_FileExist(char *path);
 void	system_Error(int code, char *string);
 int		system_Mkdir(char *dir);
 int		system_Exec(char *command);
+int system_IsFile(char* path);
 #ifdef __unix__
 int		system_MakeExec(char* file);
 #endif

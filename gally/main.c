@@ -13,6 +13,10 @@
 #include "minecraft/microsoftAuthentification.h"
 #include "launcher.h"
 #include "getopt.h"
+ 
+#define NORMAL_COLOR  "\x1B[0m"
+#define GREEN  "\x1B[32m"
+#define BLUE  "\x1B[34m"
 
 
 int main(int argc, char* argv[])
@@ -33,7 +37,8 @@ int main(int argc, char* argv[])
     /* gameSetting.skipAssets = argopt.skip_assets; */
 
     GamePath gamePath = mc_DefaultGamePath(NULL);
-    printf("%d\n", mc_DoesVersionExist(argopt.version, gamePath));
+    mc_ListInstalledVersion(gamePath);
+    /* printf("%d\n", mc_DoesVersionExist(argopt.version, gamePath)); */
     /* CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting); */
     /* char* command = mc_CreateCommand(commandArguments); */
 
