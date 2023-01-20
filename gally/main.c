@@ -22,27 +22,32 @@
 int main(int argc, char* argv[])
 {
     ArgOpt argopt = getopt_Parse(argc, argv);
-    GameSettings gameSetting;
-    
-    /* if (argopt.username) */
-    /*     gameSetting.username = argopt.username; */
-    /* else */
-    /*     gameSetting.username = "gally"; */
-
-    /* if (argopt.login_microsoft) */
-    /*     gameSetting.token = mc_AuthentificationMicrosoft(); */
-    /* else */
-    /*     gameSetting.token = "NULL"; */
-
-    /* gameSetting.skipAssets = argopt.skip_assets; */
-
     GamePath gamePath = mc_DefaultGamePath(NULL);
-    mc_ListInstalledVersion(gamePath);
-    /* printf("%d\n", mc_DoesVersionExist(argopt.version, gamePath)); */
-    /* CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting); */
-    /* char* command = mc_CreateCommand(commandArguments); */
+    GameSettings gameSetting;
 
-    /* system_Exec(command); */
-    /* free(command); */
+    if (argopt.show_installed)
+    {
+        mc_ListInstalledVersion(gamePath);
+        return 0;
+    }
+    
+    if (argopt.username)
+        gameSetting.username = argopt.username;
+    else
+        gameSetting.username = "gally";
+
+    if (argopt.login_microsoft)
+        gameSetting.token = mc_AuthentificationMicrosoft();
+    else
+        gameSetting.token = "NULL";
+
+    gameSetting.skipAssets = argopt.skip_assets;
+
+    printf("%d\n", mc_DoesVersionExist(argopt.version, gamePath));
+    CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
+    char* command = mc_CreateCommand(commandArguments);
+
+    system_Exec(command);
+    free(command);
     return 0;
 }

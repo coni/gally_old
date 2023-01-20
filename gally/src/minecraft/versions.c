@@ -176,6 +176,7 @@ void mc_ListInstalledVersion(GamePath gamePath)
             }
             free(fullpath);
         }
+        printf("\n");
         closedir(d);
     }
 }
