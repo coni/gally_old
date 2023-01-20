@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "minecraft/versions.h"
 #include "minecraft/client.h"
@@ -128,6 +129,8 @@ int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings)
 
 CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings)
 {
+    if (mc_DoesVersionExist(version, gamePath) == 0)
+        errx(1, "The version %s does not exist", version);
     DOWNLOAD_TOTAL = mc_GetTotalSize(version, gamePath, gameSettings);
     JvmArgs jvmArgs = mc_InitJvmArgs();
     CommandArguments commandArguments = mc_GetInheritenceCommandArguments(version, gamePath, gameSettings, jvmArgs);

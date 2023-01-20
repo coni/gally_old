@@ -3,18 +3,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
+
+ArgOpt argopt = {NULL, NULL, 0, 0, 0};
+Opt options[] = {
+   /* value                 shortname   longname        type    required    description */
+    { &argopt.version,      "v",        "version",      0,      1,          "Specify the version of the game" },
+    { &argopt.username,     "u",        "username",     0,      0,          "Specify the username in-game" },
+    { &argopt.skip_assets,  "sa",       "skip-assets",  1,      0,          "Don't download assets" },
+    { &argopt.login_microsoft,  "lm",   "login-microsoft",  1,      0,          "Login into a Microsoft Account" },
+    { &argopt.list_installed,  "li",   "list-installed",  1,      0,          "Show installed version of Minecraft" },
+};
+
+void getopt_CheckRequired(ArgOpt argopt)
+{
+    Opt* ptr = NULL;
+    Opt* end_ptr = options + sizeof(options)/sizeof(options[0]);
+    for (ptr = options; ptr < end_ptr; ptr++)
+    {
+        char** tmp_val = ptr->value;
+        if (ptr->required && *tmp_val == NULL)
+            errx(1, "MISSING REQUIRED PARAMETERS --%s [-%s]", ptr->longname, ptr->shortname);
+    }
+}
 
 ArgOpt getopt_Parse(int argc, char* argv[])
 {
-    ArgOpt argopt = {NULL, NULL, 0, 0, 0};
-    Opt options[] = {
-       /* value                 shortname   longname        type    required    description */
-        { &argopt.version,      "v",        "version",      0,      1,          "Specify the version of the game" },
-        { &argopt.username,     "u",        "username",     0,      0,          "Specify the username in-game" },
-        { &argopt.skip_assets,  "sa",       "skip-assets",  1,      0,          "Don't download assets" },
-        { &argopt.login_microsoft,  "lm",   "login-microsoft",  1,      0,          "Login into a Microsoft Account" },
-        { &argopt.show_installed,  "si",   "show-installed",  1,      0,          "Show installed version of Minecraft" },
-    };
 
     int i = 1;
     Opt* ptr = NULL; // Point to the current element in the option list
@@ -101,15 +115,7 @@ ArgOpt getopt_Parse(int argc, char* argv[])
         }
         else
             printf("NO FLAG %s\n", argv[i]);
-
-
         i += 1 + skip;
-    }
-    for (ptr = options; ptr < end_ptr; ptr++)
-    {
-        char** tmp_val = ptr->value;
-        if (ptr->required && *tmp_val == NULL)
-            printf("MISSING REQUIRED PARAMETERS --%s [-%s]\n", ptr->longname, ptr->shortname);
     }
     return argopt;
 }

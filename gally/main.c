@@ -25,12 +25,13 @@ int main(int argc, char* argv[])
     GamePath gamePath = mc_DefaultGamePath(NULL);
     GameSettings gameSetting;
 
-    if (argopt.show_installed)
+    if (argopt.list_installed)
     {
         mc_ListInstalledVersion(gamePath);
         return 0;
     }
-    
+
+    getopt_CheckRequired(argopt);
     if (argopt.username)
         gameSetting.username = argopt.username;
     else
@@ -43,7 +44,6 @@ int main(int argc, char* argv[])
 
     gameSetting.skipAssets = argopt.skip_assets;
 
-    printf("%d\n", mc_DoesVersionExist(argopt.version, gamePath));
     CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
     char* command = mc_CreateCommand(commandArguments);
 

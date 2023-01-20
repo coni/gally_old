@@ -9,7 +9,7 @@ struct ArgOpt_s {
     char* username;
     int skip_assets;
     int login_microsoft;
-    int show_installed;
+    int list_installed;
 }; 
 
 typedef struct ArgOpt_s ArgOpt;
@@ -24,3 +24,4 @@ typedef struct {
 } Opt;
 
 ArgOpt getopt_Parse(int argc, char* argv[]);
+void getopt_CheckRequired(ArgOpt argopt);
