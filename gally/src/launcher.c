@@ -15,6 +15,44 @@
 #include "launcher.h"
 #include "utils.h"
 
+char* mc_AuthentificationMicrosoft()
+{
+    cJSON* tmp = NULL;
+    cJSON* tmp_i = NULL;
+    char* xsts = NULL;
+    char* uhs = NULL;
+    char* mctoken = NULL;
+    char* mstoken = NULL;
+    char* xststoken = NULL;
+    char* xbtoken = NULL;
+
+    tmp = accessToken();
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "access_token");
+    mstoken = tmp_i->valuestring;
+    //FREE
+    
+    tmp = xblToken(mstoken);
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "Token");
+    xbtoken = tmp_i->valuestring;
+    //FREE
+
+    tmp = xstsToken(xbtoken);
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "Token");
+    xststoken = tmp_i->valuestring;
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "DisplayClaims");
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp_i, "xui");
+    tmp_i = cJSON_GetArrayItem(tmp_i, 0); 
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp_i, "uhs");
+    uhs = tmp_i->valuestring;
+
+    tmp = minecraftToken(xststoken, uhs);
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "access_token");
+    mctoken = tmp_i->valuestring;
+
+    // PROMPT TO ASK IF YOU WANT TO SAVE THE CREDENTIAL
+
+    return mctoken;
+}
 
 GamePath mc_DefaultGamePath(char* gameRoot)
 {
@@ -135,6 +173,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     GameArgs gameArguments = mc_InitGameArgs();
     gameArguments.auth_access_token = gameSettings.token;
 
+    printf("hihi\n");
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
         jvmArguments.natives_directory = gamePath.root;
     else
@@ -160,6 +199,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
         }
         classpath[i] = NULL;
     }
+    printf("hihi\n");
 
     jvmArguments.classpath = classpath;
     jvmArguments.client = clientPath;

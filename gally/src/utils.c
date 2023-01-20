@@ -27,7 +27,21 @@ int DOWNLOAD_CUR = 0;
 int DOWNLOAD_TOTAL = 0;
 int DOWNLOAD_TEST = 0;
 
+#ifdef __amd64__ 
+    char* ARCHNAME = "x64";
+#elif _M_AMD64
+    char* ARCHNAME = "x64";
+#elif  _M_IX86
+    char* ARCHNAME = "x86";
+#elif i386
+    char* ARCHNAME = "i386";
+#endif
 
+#ifdef __unix__
+    char* OSNAME = "linux";
+#elif _WIN32
+    char* OSNAME = "windows";
+#endif
 
 int msleep(long msec)
 {

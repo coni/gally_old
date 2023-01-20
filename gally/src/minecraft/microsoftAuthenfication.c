@@ -5,9 +5,8 @@
 #include "cjson/cJSON.h"
 #include "utils.h"
 
-char* accessToken()
+cJSON* accessToken()
 {
-    char* token = NULL;
     char* device_code = NULL;
     char* user_code = NULL;
     char* message = NULL;
@@ -57,11 +56,11 @@ char* accessToken()
     while (!i);
 
     http_FreeResponse(response);
-    token = i->valuestring;
-    return token;
+
+    return responseJson;
 }
 
-char* xblToken(char* accessToken)
+cJSON* xblToken(char* accessToken)
 {
     char* token = NULL;
     char* value_token = malloc(sizeof(char) * (strlen(accessToken) + 3));
@@ -92,16 +91,14 @@ char* xblToken(char* accessToken)
 
     char* data = cJSON_Print(payload);
     http_Response response = http_Post("https://user.auth.xboxlive.com/user/authenticate", data, "Content-Type: application/json");
-    cJSON* responseJson = cJSON_Parse(response.data);
-    tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "Token");
-    if (tmp)
-        token = tmp->valuestring;
     
+    cJSON* responseJson = cJSON_Parse(response.data);
     free(value_token);
-    return token;
+
+    return responseJson;
 }
 
-void xstsToken(char* xbToken, char** xstsToken, char** uhs)
+cJSON* xstsToken(char* xbToken)
 {
     cJSON* tmp_i = NULL;
 
@@ -125,16 +122,10 @@ void xstsToken(char* xbToken, char** xstsToken, char** uhs)
 
     http_Response response = http_Post("https://xsts.auth.xboxlive.com/xsts/authorize", cJSON_Print(payload), "Content-Type: application/json");
     cJSON* responseJson = cJSON_Parse(response.data);
-    tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "Token");
-    *xstsToken = tmp->valuestring;
-    tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "DisplayClaims");
-    tmp = cJSON_GetObjectItemCaseSensitive(tmp, "xui");
-    tmp = cJSON_GetArrayItem(tmp, 0); 
-    tmp = cJSON_GetObjectItemCaseSensitive(tmp, "uhs");
-    *uhs = tmp->valuestring;
+    return responseJson;
 }
 
-char* mcToken(char* xstsToken, char* uhs)
+cJSON* minecraftToken(char* xstsToken, char* uhs)
 {
     cJSON* responseJson = NULL;
     cJSON* tmp = NULL;
@@ -149,9 +140,8 @@ char* mcToken(char* xstsToken, char* uhs)
 
     http_Response response = http_Post("https://api.minecraftservices.com/authentication/login_with_xbox", cJSON_Print(payload), "Content-Type: application/json");
     responseJson = cJSON_Parse(response.data);
-    tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "access_token");
 
-    return tmp->valuestring;
+    return responseJson;
 }
 
 char* mc_GetUUID(char* username)

@@ -8,6 +8,7 @@ struct ArgOpt_s {
     char* version;
     char* username;
     int skip_assets;
+    int login_microsoft;
 }; 
 
 typedef struct ArgOpt_s ArgOpt;

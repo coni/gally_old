@@ -23,3 +23,4 @@ CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSe
 char* mc_CreateCommand(CommandArguments commandArguments);
 int mc_GetTotalSizeVersion(char* version, GamePath gamePath, GameSettings gameSettings);
 int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings);
+char* mc_AuthentificationMicrosoft();
