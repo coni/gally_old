@@ -21,6 +21,7 @@ extern int DOWNLOAD_TOTAL;
 extern int DOWNLOAD_TEST;
 
 #include "cjson/cJSON.h"
+#include "curl/curl.h"
 
 typedef struct
 {
@@ -33,13 +34,14 @@ void	system_Error(int code, char *string);
 int		system_Mkdir(char *dir);
 int		system_Exec(char *command);
 int system_IsFile(char* path);
+void system_CreateFile(char* filename, char* string);
 #ifdef __unix__
 int		system_MakeExec(char* file);
 #endif
 
 int		http_Download(char *url, char *filename);
 /* char* http_get(char* url); */
-http_Response http_Get(char* url);
+http_Response http_Get(char* url, struct curl_slist *headers);
 http_Response http_Post(char* url, char* data, char* content_type);
 void http_FreeResponse(http_Response response);
 

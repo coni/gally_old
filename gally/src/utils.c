@@ -241,7 +241,7 @@ int http_Download(char* url, char* filename)
 	return http_code;
 }
 
-http_Response http_Get(char* url)
+http_Response http_Get(char* url, struct curl_slist *headers)
 {
     http_Response response = {0, NULL};
     struct MemoryStruct chunk;
@@ -260,6 +260,8 @@ http_Response http_Get(char* url)
     curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_Memory);
     curl_easy_setopt(session, CURLOPT_WRITEDATA, (void *) &chunk);
     curl_easy_setopt(session, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+    if (headers)
+        curl_easy_setopt(session, CURLOPT_HTTPHEADER, headers);
 
     curl_easy_perform(session);
 
@@ -384,6 +386,17 @@ void system_Error(int code, char* string)
 {
     fprintf(stderr, string);
     exit(code);
+}
+
+void system_CreateFile(char* filename, char* string)
+{
+	FILE *fp = fopen(filename, "ab");
+    if (fp != NULL)
+    {
+        fputs(string, fp);
+        fclose(fp);
+    }
+
 }
 
 int system_FileExist(char* path)

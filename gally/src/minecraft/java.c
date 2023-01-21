@@ -159,6 +159,9 @@ char* mc_DownloadJreComponent(char* component, GamePath gamePath)
             }
         }
     }
+
+    cJSON_free(jreBaseManifest);
+    cJSON_free(jreManifest);
     return javaPath;
 }
 
@@ -184,6 +187,7 @@ int mc_GetJreSize(cJSON* jreManifest)
 
 int mc_GetJreSizeVersion(char* version, GamePath gamePath)
 {
+    int size = 0;
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
     char* component = mc_GetJreComponent(manifest);
@@ -191,9 +195,12 @@ int mc_GetJreSizeVersion(char* version, GamePath gamePath)
     {
         cJSON* jreBaseManifest = mc_GetJreMainManifest(gamePath);
         cJSON* jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
-        return mc_GetJreSize(jreManifest);
+        size = mc_GetJreSize(jreManifest);
     }
-    return 0;
+
+    cJSON_free(mainManifest);
+    cJSON_free(manifest);
+    return size;
 }
 
 char* mc_DownloadJre(cJSON* manifest, GamePath gamePath)

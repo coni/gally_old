@@ -172,7 +172,11 @@ int mc_GetLibrariesSizeVersion(char* version, GamePath gamePath)
 {
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
-    return mc_GetLibrariesSize(manifest);
+    int size = mc_GetLibrariesSize(manifest);
+
+    cJSON_free(mainManifest);
+    cJSON_free(manifest);
+    return size;
 }
 
 char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)

@@ -17,16 +17,26 @@
 #include "launcher.h"
 #include "utils.h"
 
-char* mc_AuthentificationMicrosoft()
+void GamePath_free(GamePath* gamePath)
+{
+    free(gamePath->assets);
+    free(gamePath->version);
+    free(gamePath->libraries);
+    free(gamePath->root);
+    free(gamePath->runtime);
+    free(gamePath->bin);
+}
+
+char* mc_AuthentificationMicrosoft(GamePath gamePath, GameSettings* gameSetting)
 {
     cJSON* tmp = NULL;
     cJSON* tmp_i = NULL;
-    char* xsts = NULL;
     char* uhs = NULL;
     char* mctoken = NULL;
     char* mstoken = NULL;
     char* xststoken = NULL;
     char* xbtoken = NULL;
+    int expire = time(NULL);
 
     tmp = accessToken();
     tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "access_token");
@@ -51,7 +61,37 @@ char* mc_AuthentificationMicrosoft()
     tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "access_token");
     mctoken = tmp_i->valuestring;
 
-    // PROMPT TO ASK IF YOU WANT TO SAVE THE CREDENTIAL
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "expires_in");
+    expire += tmp_i->valueint;
+
+    tmp = getProfile(mctoken);
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "name");
+    gameSetting->username = tmp_i->valuestring;
+
+    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp, "id");
+    gameSetting->uuid = tmp_i->valuestring;
+
+	char buf_input[4];
+    printf("Stay signed in? (yes/no) %s : ", gameSetting->username);
+	scanf("%s", &buf_input);
+    if (strcmp(buf_input, "yes") == 0)
+    {
+        size_t len_fullpath = strlen(gamePath.root) + strlen("/accounts.json") + 1;
+        char* fullpath = malloc(sizeof(char) * len_fullpath);
+        snprintf(fullpath, len_fullpath, "%s/accounts.json", gamePath.root);
+
+        tmp = cJSON_CreateObject();
+        tmp_i = cJSON_CreateObject();
+        cJSON_AddStringToObject(tmp_i, "access_token", mctoken);
+        cJSON_AddNumberToObject(tmp_i, "expiration", expire);
+        cJSON_AddItemToObject(tmp, gameSetting->username, tmp_i);
+        char* raw = cJSON_Print(tmp);
+		system_CreateFile(fullpath, raw);
+
+        free(raw);
+        free(fullpath);
+    }
+
     return mctoken;
 }
 
@@ -125,6 +165,9 @@ int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings)
     char* inherit =  mc_GetInherit(manifest);
 
     total_size = inherit != NULL ? total_size + mc_GetTotalSize(inherit, gamePath, gameSettings) : total_size;
+
+    cJSON_free(mainManifest);
+    cJSON_free(manifest);
     return total_size;
 }
 
@@ -152,6 +195,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
 
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
+
 
     if (gameSettings.skipAssets == 0)
     {
@@ -213,7 +257,13 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     gameArguments.auth_player_name = gameSettings.username;
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
-    gameArguments.auth_uuid = mc_GetUUID(gameArguments.auth_player_name);
+    if (gameArguments.auth_uuid == NULL)
+    {
+        if (gameSettings.uuid)
+            gameArguments.auth_uuid = gameSettings.uuid;
+        else
+            gameArguments.auth_uuid = mc_GetUUID(gameArguments.auth_player_name);
+    }
 
     char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments, gameArguments, gamePath);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);
@@ -282,6 +332,8 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
             commandArguments.game = inheritArgument.game;
     }
 
+    cJSON_free(manifest);
+    cJSON_free(mainManifest);
     return commandArguments;
 }
 

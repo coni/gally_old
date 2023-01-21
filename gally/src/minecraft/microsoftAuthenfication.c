@@ -149,10 +149,24 @@ char* mc_GetUUID(char* username)
     char* url = malloc(sizeof(char) * (strlen(username) + 49));
     strcpy(url, "https://api.mojang.com/users/profiles/minecraft/");
     strcat(url, username);
-    http_Response response = http_Get(url); 
+    http_Response response = http_Get(url, NULL); 
     cJSON* responseJson = cJSON_Parse(response.data);
     cJSON* tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "id");
     username = tmp->valuestring;
     cJSON_free(responseJson);
     return username;
+}
+
+
+cJSON* getProfile(char* mctoken)
+{
+    size_t len_header = strlen("Authorization: Bearer ") + strlen(mctoken) + 1;
+    char* header = malloc(sizeof(char) * (len_header));
+    snprintf(header, len_header, "Authorization: Bearer %s", mctoken); 
+     struct curl_slist *chunk = NULL;
+    chunk = curl_slist_append(chunk, header);
+
+    http_Response response = http_Get("https://api.minecraftservices.com/minecraft/profile", chunk);
+    cJSON* responseJson = cJSON_Parse(response.data);
+    return responseJson;
 }

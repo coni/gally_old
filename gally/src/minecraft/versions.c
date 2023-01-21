@@ -120,24 +120,22 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
         free(filepath);
         return 1;
     }
+    free(filepath);
     
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     for (int i = 0; i < 2; i++)
     {
         cJSON* versions = cJSON_GetObjectItemCaseSensitive(mainManifest, "versions");
-        if (versions == NULL)
+        if (versions)
         {
-            cJSON_free(mainManifest);
-            return 0;
-        }
-
-        cJSON_ArrayForEach(versionInfo, versions)
-        {
-            id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
-            if (strcmp(id->valuestring,version) == 0)
+            cJSON_ArrayForEach(versionInfo, versions)
             {
-                exist = 1;
-                break;
+                id = cJSON_GetObjectItemCaseSensitive(versionInfo, "id");
+                if (strcmp(id->valuestring,version) == 0)
+                {
+                    exist = 1;
+                    break;
+                }
             }
         }
         if (exist == 0 && i == 0)
@@ -147,7 +145,6 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
         }
     }
 
-    free(filepath);
     cJSON_free(mainManifest);
     return exist;
 }

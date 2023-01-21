@@ -13,10 +13,6 @@
 #include "minecraft/microsoftAuthentification.h"
 #include "launcher.h"
 #include "getopt.h"
- 
-#define NORMAL_COLOR  "\x1B[0m"
-#define GREEN  "\x1B[32m"
-#define BLUE  "\x1B[34m"
 
 
 int main(int argc, char* argv[])
@@ -38,7 +34,7 @@ int main(int argc, char* argv[])
         gameSetting.username = "gally";
 
     if (argopt.login_microsoft)
-        gameSetting.token = mc_AuthentificationMicrosoft();
+        gameSetting.token = mc_AuthentificationMicrosoft(gamePath, &gameSetting);
     else
         gameSetting.token = "NULL";
 
@@ -47,7 +43,8 @@ int main(int argc, char* argv[])
     CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
     char* command = mc_CreateCommand(commandArguments);
 
-    system_Exec(command);
+    /* system_Exec(command); */
+    GamePath_free(&gamePath);
     free(command);
     return 0;
 }

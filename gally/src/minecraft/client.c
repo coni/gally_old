@@ -24,7 +24,10 @@ int mc_GetClientSizeVersion(char* version, GamePath gamePath)
 {
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
-    return mc_GetClientSize(manifest);
+    int size = mc_GetClientSize(manifest);
+    cJSON_free(mainManifest);
+    cJSON_free(manifest);
+    return size;
 }
 
 char* mc_DownloadClient(cJSON* manifest, GamePath gamePath, char* version)
