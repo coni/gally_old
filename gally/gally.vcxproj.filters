@@ -67,6 +67,9 @@
     <ClCompile Include="src\minecraft\microsoftAuthenfication.c">
       <Filter>Fichiers sources\src\minecraft</Filter>
     </ClCompile>
+    <ClCompile Include="src\minecraft\profil.c">
+      <Filter>Fichiers sources\src\minecraft</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\utils.h">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="include\getopt.h">
       <Filter>Fichiers sources\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\minecraft\profil.h">
+      <Filter>Fichiers sources\include\minecraft</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

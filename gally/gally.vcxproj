@@ -160,6 +160,7 @@
     <ClCompile Include="src\minecraft\lwjgl.c" />
     <ClCompile Include="src\minecraft\mainclass.c" />
     <ClCompile Include="src\minecraft\microsoftAuthenfication.c" />
+    <ClCompile Include="src\minecraft\profil.c" />
     <ClCompile Include="src\minecraft\versions.c" />
     <ClCompile Include="src\utils.c" />
   </ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="include\minecraft\lwjgl.h" />
     <ClInclude Include="include\minecraft\mainclass.h" />
     <ClInclude Include="include\minecraft\microsoftAuthentification.h" />
+    <ClInclude Include="include\minecraft\profil.h" />
     <ClInclude Include="include\minecraft\versions.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>

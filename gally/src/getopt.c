@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
 
 ArgOpt argopt = {NULL, NULL, 0, 0, 0};
 Opt options[] = {
@@ -23,7 +22,10 @@ void getopt_CheckRequired(ArgOpt argopt)
     {
         char** tmp_val = ptr->value;
         if (ptr->required && *tmp_val == NULL)
-            errx(1, "MISSING REQUIRED PARAMETERS --%s [-%s]", ptr->longname, ptr->shortname);
+        {
+            printf("MISSING REQUIRED PARAMETERS --%s [-%s]", ptr->longname, ptr->shortname);
+            system_Error(1, "");
+        }
     }
 }
 

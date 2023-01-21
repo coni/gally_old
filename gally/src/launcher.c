@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
 
 #include "minecraft/versions.h"
 #include "minecraft/client.h"
@@ -174,9 +173,9 @@ int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings)
 CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings)
 {
     if (mc_DoesVersionExist(version, gamePath) == 0)
-        errx(1, "The version %s does not exist", version);
+        system_Error(1, "The specified version does not exist");
     else if (mc_IsUsernameCorrect(gameSettings.username) == 0)
-        errx(1, "The username %s is incorrect", gameSettings.username);
+        system_Error(1, "The specified username is incorrect");
 
     DOWNLOAD_TOTAL = mc_GetTotalSize(version, gamePath, gameSettings);
     JvmArgs jvmArgs = mc_InitJvmArgs();
@@ -278,10 +277,11 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
             cJSON_free(tmp);
         }
         else
-            gameArguments.auth_access_token = gameSettings.token;
+            gameArguments.auth_access_token = "NULL";
     }
     else
         gameArguments.auth_access_token = gameSettings.token;
+
     gameArguments.game_directory = gamePath.root;
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;

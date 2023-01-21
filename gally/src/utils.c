@@ -7,12 +7,11 @@
 
 #ifdef __unix__
 #include <unistd.h>
-#include <time.h>
-
-int nanosleep(const struct timespec *req, struct timespec *rem);
 #endif
 
+#include <time.h>
 #include <curl/curl.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
@@ -71,8 +70,7 @@ int msleep(long msec)
 int system_IsFile(char* path)
 {
     struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+    return (stat(path, &path_stat) == 0 && !(path_stat.st_mode & S_IFREG));
 }
 
 
@@ -210,7 +208,6 @@ void http_FreeResponse(http_Response response)
 
 int http_Download(char* url, char* filename)
 {
-    printf("%s\n", filename);
     int http_code = 0;
     curl_global_init(CURL_GLOBAL_ALL);
 	CURL* session = curl_easy_init();

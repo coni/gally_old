@@ -1,22 +1,13 @@
-#ifdef _WIN32
-#include <cjson/cJSON.h>
-#include <utils.h>
-#endif
-
-#ifdef __unix__
 #include "cjson/cJSON.h"
 #include "utils.h"
-#endif
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#if __unix
 #include <dirent.h> 
- #ifdef _WIN32
-#include <direct.h>
-#elif defined __linux__
 #include <sys/stat.h>
 #endif
 
@@ -151,6 +142,7 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
 
 void mc_ListInstalledVersion(GamePath gamePath)
 {
+#ifdef __unix__
     char* path = gamePath.version;
 	DIR *d;
     struct dirent *dir;
@@ -176,4 +168,39 @@ void mc_ListInstalledVersion(GamePath gamePath)
         printf("\n");
         closedir(d);
     }
+#elif _WIN32
+    size_t len_sDir = strlen(gamePath.version) + 1;
+    wchar_t* sDir = malloc(sizeof(wchar_t) * len_sDir);
+    swprintf(sDir, len_sDir, L"%hs", gamePath.version);
+
+    WIN32_FIND_DATA fdFile;
+    HANDLE hFind = NULL;
+
+    wchar_t sPath[2048];
+
+    //Specify a file mask. *.* = We want everything! 
+    wsprintf(sPath, L"%s\\*.*", sDir);
+
+    if ((hFind = FindFirstFile(sPath, &fdFile)) == INVALID_HANDLE_VALUE)
+        return;
+
+    do
+    {
+        if (wcscmp(fdFile.cFileName, L".") != 0
+            && wcscmp(fdFile.cFileName, L"..") != 0)
+        {
+            wsprintf(sPath, L"%s\\%s\\%s.json", sDir, fdFile.cFileName, fdFile.cFileName);
+
+            if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            {
+                size_t len_vout = wcslen(sPath) + 1;
+                char* vOut = malloc(sizeof(char) * len_vout);
+                wcstombs_s(NULL, vOut, len_vout, sPath, len_vout);
+                if (system_FileExist(vOut) == 0)
+                    wprintf(L"%s  ", fdFile.cFileName);
+            }
+        }
+    } while (FindNextFile(hFind, &fdFile));
+    FindClose(hFind);
+#endif
 }
