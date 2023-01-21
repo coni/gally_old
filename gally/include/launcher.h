@@ -10,10 +10,10 @@ typedef struct {
 } GamePath;
 
 typedef struct {
-    int skipAssets;
     char* username;
     char* token;
     char* uuid;
+    int skipAssets;
 } GameSettings;
 
 #include "minecraft/arguments.h"

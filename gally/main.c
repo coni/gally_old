@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 {
     ArgOpt argopt = getopt_Parse(argc, argv);
     GamePath gamePath = mc_DefaultGamePath(NULL);
-    GameSettings gameSetting;
+    GameSettings gameSetting = {NULL, NULL, NULL, 0} ;
 
     if (argopt.list_installed)
     {
@@ -35,15 +35,13 @@ int main(int argc, char* argv[])
 
     if (argopt.login_microsoft)
         gameSetting.token = mc_AuthentificationMicrosoft(gamePath, &gameSetting);
-    else
-        gameSetting.token = "NULL";
 
     gameSetting.skipAssets = argopt.skip_assets;
 
     CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
     char* command = mc_CreateCommand(commandArguments);
 
-    /* system_Exec(command); */
+    system_Exec(command);
     GamePath_free(&gamePath);
     free(command);
     return 0;

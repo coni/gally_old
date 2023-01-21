@@ -23,7 +23,7 @@ GameArgs mc_InitGameArgs()
 	args.game_directory = "\".\"";
 	args.assets_root = "assets";
 	args.assets_index_name = "NULL";
-	args.auth_uuid = "NULL";
+	args.auth_uuid = NULL;
 	args.auth_access_token = "NULL";
 	args.clientid = "NULL";
 	args.auth_xuid = "NULL";

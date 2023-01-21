@@ -196,7 +196,6 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
 
-
     if (gameSettings.skipAssets == 0)
     {
         cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
@@ -221,7 +220,6 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
 
     JvmArgs jvmArguments = mc_InitJvmArgs();
     GameArgs gameArguments = mc_InitGameArgs();
-    gameArguments.auth_access_token = gameSettings.token;
 
     if (compareLwjglVersion(lwjglVersion, "3.3.1") >= 0)
         jvmArguments.natives_directory = gamePath.root;
@@ -252,9 +250,39 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     jvmArguments.classpath = classpath;
     jvmArguments.client = clientPath;
 
-    gameArguments.version = version;
-    gameArguments.game_directory = gamePath.root;
     gameArguments.auth_player_name = gameSettings.username;
+    gameArguments.version = version;
+    if (gameSettings.token == NULL || strcmp(gameSettings.token, "NULL") == 0)
+    {
+        size_t len_fullpath = strlen(gamePath.root) + strlen("/accounts.json") + 1;
+        char* fullpath = malloc(sizeof(char) * len_fullpath);
+        snprintf(fullpath, len_fullpath, "%s/accounts.json", gamePath.root);
+        if (system_FileExist(fullpath) == 0)
+        {
+            cJSON* tmp = json_ParseFile(fullpath);
+            cJSON* tmp_i = NULL;
+            cJSON_ArrayForEach(tmp_i, tmp)
+            {
+                if (strcmp(tmp_i->string, gameSettings.username) == 0)
+                {
+                    tmp_i = cJSON_GetObjectItemCaseSensitive(tmp_i, "access_token");
+                    if (tmp_i)
+                    {
+                        gameArguments.auth_access_token = tmp_i->valuestring;
+                        break;
+                    }
+                }
+
+            }
+
+            cJSON_free(tmp);
+        }
+        else
+            gameArguments.auth_access_token = gameSettings.token;
+    }
+    else
+        gameArguments.auth_access_token = gameSettings.token;
+    gameArguments.game_directory = gamePath.root;
     gameArguments.assets_root = gamePath.assets;
     gameArguments.assets_index_name = assets_index;
     if (gameArguments.auth_uuid == NULL)
