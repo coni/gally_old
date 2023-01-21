@@ -210,6 +210,7 @@ void http_FreeResponse(http_Response response)
 
 int http_Download(char* url, char* filename)
 {
+    printf("%s\n", filename);
     int http_code = 0;
     curl_global_init(CURL_GLOBAL_ALL);
 	CURL* session = curl_easy_init();
@@ -217,6 +218,9 @@ int http_Download(char* url, char* filename)
 	// Source : https://curl.se/libcurl/c/url2file.html
 	if (system_FileExist(filename) != 0)
     {
+        size_t len_tmpfilename = strlen(filename) + 5;
+        char* tmpfilename = malloc(sizeof(char) * len_tmpfilename);
+        snprintf(tmpfilename, len_tmpfilename, "%s.tmp", filename);
 
         FILE* pagefile;
 
@@ -225,13 +229,15 @@ int http_Download(char* url, char* filename)
         curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, write_Data);
         curl_easy_setopt(session, CURLOPT_FOLLOWLOCATION, 1);
 
-        system_Mkdir(filename);
-        pagefile = fopen(filename, "wb");
+        system_Mkdir(tmpfilename);
+        pagefile = fopen(tmpfilename, "wb");
         if (pagefile) {
             curl_easy_setopt(session, CURLOPT_WRITEDATA, pagefile);
             curl_easy_perform(session);
             fclose(pagefile);
         }
+        rename(tmpfilename, filename);
+        free(tmpfilename);
     }
 
 	curl_easy_getinfo(session, CURLINFO_RESPONSE_CODE, &http_code);
