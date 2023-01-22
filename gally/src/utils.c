@@ -22,6 +22,7 @@
 #include "cjson/cJSON.h"
 #include "utils.h"
 
+
 int DOWNLOAD_CUR = 0;
 int DOWNLOAD_TOTAL = 0;
 int DOWNLOAD_TEST = 0;
@@ -38,6 +39,7 @@ int DOWNLOAD_TEST = 0;
 
 #ifdef __unix__
     char* OSNAME = "linux";
+    int nanosleep(const struct timespec *req, struct timespec *rem);
 #elif _WIN32
     char* OSNAME = "windows";
 #endif
@@ -70,7 +72,12 @@ int msleep(long msec)
 int system_IsFile(char* path)
 {
     struct stat path_stat;
+#ifdef _WIN32
     return (stat(path, &path_stat) == 0 && !(path_stat.st_mode & S_IFREG));
+#elif __unix__
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
+#endif
 }
 
 
