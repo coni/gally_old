@@ -224,6 +224,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
         jvmArguments.natives_directory = gamePath.root;
     else
         jvmArguments.natives_directory = mc_DownloadLwjgl(lwjglVersion, gamePath.bin);
+    free(lwjglVersion);
 
     if (parentJvmArgs.classpath)
     {
@@ -398,4 +399,15 @@ char* mc_CreateCommand(CommandArguments commandArguments)
         strcat(command, " ");
     }
     return command;
+}
+
+CommandArguments CommandArguments_free(CommandArguments* ca)
+{
+    free(ca->java);
+    free(ca->mainclass);
+    for (int i = 0; ca->jvm[i] != NULL; i++)
+        free(ca->jvm[i]);
+    for (int i = 0; ca->game[i] != NULL; i++)
+        free(ca->game[i]);
+
 }

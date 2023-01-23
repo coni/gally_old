@@ -21,6 +21,7 @@ typedef struct {
 GamePath mc_DefaultGamePath(char* gameRoot);
 CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings, JvmArgs parentJvmArgs);
 CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSettings gameSettings);
+CommandArguments CommandArguments_free(CommandArguments* ca);
 char* mc_CreateCommand(CommandArguments commandArguments);
 int mc_GetTotalSizeVersion(char* version, GamePath gamePath, GameSettings gameSettings);
 int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings);

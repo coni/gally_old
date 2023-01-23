@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
     char* command = mc_CreateCommand(commandArguments);
 
     /* system_Exec(command); */
+    CommandArguments_free(&commandArguments);
     GamePath_free(&gamePath);
     free(command);
     return 0;
