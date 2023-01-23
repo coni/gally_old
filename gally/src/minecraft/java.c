@@ -195,6 +195,8 @@ int mc_GetJreSizeVersion(char* version, GamePath gamePath)
         cJSON* jreBaseManifest = mc_GetJreMainManifest(gamePath);
         cJSON* jreManifest = mc_GetJreManifest(jreBaseManifest, component, gamePath);
         size = mc_GetJreSize(jreManifest);
+        cJSON_Delete(jreBaseManifest);
+        cJSON_Delete(jreManifest);
     }
 
     cJSON_Delete(mainManifest);

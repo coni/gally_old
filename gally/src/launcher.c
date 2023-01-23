@@ -354,6 +354,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
             }
             inheritArgument.game[i] = NULL;
             free(gameArgs);
+            free(inherit);
             commandArguments.game = inheritArgument.game;
         }
         else

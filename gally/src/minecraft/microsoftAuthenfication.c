@@ -146,15 +146,18 @@ cJSON* minecraftToken(char* xstsToken, char* uhs)
 
 char* mc_GetUUID(char* username)
 {
+    char* uuid = NULL;
     char* url = malloc(sizeof(char) * (strlen(username) + 49));
     strcpy(url, "https://api.mojang.com/users/profiles/minecraft/");
     strcat(url, username);
     http_Response response = http_Get(url, NULL); 
     cJSON* responseJson = cJSON_Parse(response.data);
     cJSON* tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "id");
-    username = tmp->valuestring;
-    cJSON_free(responseJson);
-    return username;
+    uuid = malloc(sizeof(char) * (strlen(tmp->valuestring) + 1));
+
+    cJSON_Delete(responseJson);
+    free(url);
+    return uuid;
 }
 
 

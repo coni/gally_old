@@ -119,6 +119,6 @@ int mc_GetAssetsSizeVersion(char* version, GamePath gamePath)
     int size = mc_GetAssetsSize(assetsManifest);
     cJSON_Delete(mainManifest);
     cJSON_Delete(manifest);
-    free(assetsManifest);
+    cJSON_Delete(assetsManifest);
     return size;
 }

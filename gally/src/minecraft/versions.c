@@ -131,12 +131,12 @@ int mc_DoesVersionExist(char* version, GamePath gamePath)
         }
         if (exist == 0 && i == 0)
         {
-            cJSON_free(mainManifest);
+            cJSON_Delete(mainManifest);
             mainManifest = mc_RefreshMainManifest(gamePath);
         }
     }
 
-    cJSON_free(mainManifest);
+    cJSON_Delete(mainManifest);
     return exist;
 }
 
@@ -162,6 +162,7 @@ void mc_ListInstalledVersion(GamePath gamePath)
                 snprintf(filename, len_filename, "%s/%s.json", fullpath, dir->d_name);
                 if (system_FileExist(filename) == 0)
                     printf("%s  ", dir->d_name); 
+                free(filename);
             }
             free(fullpath);
         }
@@ -198,9 +199,11 @@ void mc_ListInstalledVersion(GamePath gamePath)
                 wcstombs_s(NULL, vOut, len_vout, sPath, len_vout);
                 if (system_FileExist(vOut) == 0)
                     wprintf(L"%s  ", fdFile.cFileName);
+                free(vOut);
             }
         }
     } while (FindNextFile(hFind, &fdFile));
     FindClose(hFind);
+    free(sDir);
 #endif
 }
