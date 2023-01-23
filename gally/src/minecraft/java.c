@@ -70,7 +70,6 @@ cJSON* mc_GetJreManifest(cJSON* manifest, char* component, GamePath gamePath)
     }
     free(os);
     free(fullpath);
-    free(i);
 
     return jreManifest;
 }
@@ -160,8 +159,8 @@ char* mc_DownloadJreComponent(char* component, GamePath gamePath)
         }
     }
 
-    cJSON_free(jreBaseManifest);
-    cJSON_free(jreManifest);
+    cJSON_Delete(jreBaseManifest);
+    cJSON_Delete(jreManifest);
     return javaPath;
 }
 
@@ -198,8 +197,8 @@ int mc_GetJreSizeVersion(char* version, GamePath gamePath)
         size = mc_GetJreSize(jreManifest);
     }
 
-    cJSON_free(mainManifest);
-    cJSON_free(manifest);
+    cJSON_Delete(mainManifest);
+    cJSON_Delete(manifest);
     return size;
 }
 

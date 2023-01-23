@@ -25,8 +25,8 @@ int mc_GetClientSizeVersion(char* version, GamePath gamePath)
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
     int size = mc_GetClientSize(manifest);
-    cJSON_free(mainManifest);
-    cJSON_free(manifest);
+    cJSON_Delete(mainManifest);
+    cJSON_Delete(manifest);
     return size;
 }
 
@@ -57,9 +57,11 @@ char* mc_DownloadClient(cJSON* manifest, GamePath gamePath, char* version)
 
 		snprintf(path, len_path, "%s/%s/%s.jar", versionPath, version, version);
 		http_Download(url, path);
+
+        free(path);
+        free(url);
 	}
 
-    free(url);
 
     if (path == NULL)
     {

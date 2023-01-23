@@ -165,8 +165,8 @@ int mc_GetTotalSize(char* version, GamePath gamePath, GameSettings gameSettings)
 
     total_size = inherit != NULL ? total_size + mc_GetTotalSize(inherit, gamePath, gameSettings) : total_size;
 
-    cJSON_free(mainManifest);
-    cJSON_free(manifest);
+    cJSON_Delete(mainManifest);
+    cJSON_Delete(manifest);
     return total_size;
 }
 
@@ -274,7 +274,7 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
 
             }
 
-            cJSON_free(tmp);
+            cJSON_Delete(tmp);
         }
         else
             gameArguments.auth_access_token = "NULL";
@@ -360,8 +360,8 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
             commandArguments.game = inheritArgument.game;
     }
 
-    cJSON_free(manifest);
-    cJSON_free(mainManifest);
+    cJSON_Delete(manifest);
+    cJSON_Delete(mainManifest);
     return commandArguments;
 }
 

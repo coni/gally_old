@@ -44,8 +44,10 @@ cJSON* mc_GetAssetsManifest(cJSON *manifest, GamePath gamePath)
         snprintf(fullpath, len_fullpath, "%s/%s.json", indexesPath, index->valuestring);
         http_Download(url->valuestring, fullpath);
 		assetsManifest = json_ParseFile(fullpath);
+        free(fullpath);
 	}
 
+    free(indexesPath);
     return assetsManifest;
 }
 
@@ -87,6 +89,7 @@ int mc_DownloadAssets(cJSON *assetsManifest, GamePath gamePath)
 		}
 	}
 
+    free(path);
     cJSON_Delete(assetsManifest);
 	return 0;
 }
@@ -113,5 +116,9 @@ int mc_GetAssetsSizeVersion(char* version, GamePath gamePath)
     cJSON* mainManifest = mc_GetMainManifest(gamePath);
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
     cJSON* assetsManifest = mc_GetAssetsManifest(manifest, gamePath);
-    return mc_GetAssetsSize(assetsManifest);
+    int size = mc_GetAssetsSize(assetsManifest);
+    cJSON_Delete(mainManifest);
+    cJSON_Delete(manifest);
+    free(assetsManifest);
+    return size;
 }

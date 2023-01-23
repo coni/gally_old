@@ -174,8 +174,8 @@ int mc_GetLibrariesSizeVersion(char* version, GamePath gamePath)
     cJSON* manifest = mc_GetManifest(mainManifest, gamePath, version);
     int size = mc_GetLibrariesSize(manifest);
 
-    cJSON_free(mainManifest);
-    cJSON_free(manifest);
+    cJSON_Delete(mainManifest);
+    cJSON_Delete(manifest);
     return size;
 }
 
@@ -205,10 +205,6 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
     cJSON* tmp = NULL;
     cJSON* tmp_i = NULL;
     cJSON* libDlInfo = NULL;
-
-    char* len_lwjglClasspath = 0;
-	char* lwjglClasspath = malloc(sizeof(char*));
-	char* lwjglVersion = "0.0.0";
 
     char* libNameFormatted = NULL;
     char* libUrl = NULL;
@@ -329,6 +325,7 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
 					libUrl = realloc(libUrl, sizeof(char) * len_libUrl);
 					snprintf(libUrl, len_libUrl, "%s%s", libDlInfo->valuestring, libNameFormatted);
 					http_Download(libUrl, fullpath);	
+                    free(libUrl);
 				}
 			}
 

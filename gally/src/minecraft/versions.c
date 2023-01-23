@@ -17,7 +17,7 @@ cJSON* mc_GetMainManifest(GamePath gamePath)
 {
     char* path = gamePath.root;
     cJSON* manifest = NULL;
-	size_t len_fullpath = (strlen(path) + 25)*  sizeof(char*);
+	size_t len_fullpath = (strlen(path) + 25) * sizeof(char*);
 	char* fullpath = malloc(len_fullpath);
 
 	if (fullpath != NULL)

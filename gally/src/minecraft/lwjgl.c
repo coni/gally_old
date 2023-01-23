@@ -10,12 +10,12 @@ cJSON * mc_GetBaseLwjglManifest(char* path)
 {
     cJSON* manifest = NULL;    
     size_t len_filename = strlen(path) + 12;
-      char* filename = malloc(sizeof(char) * len_filename);
-      snprintf(filename, len_filename, "%s/lwjgl.json", path);
-      http_Download("https://gally-launcher.com/files/lwjgl.json", filename);
-      manifest = json_ParseFile(filename);
-      free(filename);
-      return manifest;
+    char* filename = malloc(sizeof(char) * len_filename);
+    snprintf(filename, len_filename, "%s/lwjgl.json", path);
+    http_Download("https://gally-launcher.com/files/lwjgl.json", filename);
+    manifest = json_ParseFile(filename);
+    free(filename);
+    return manifest;
 }
 
 char* mc_DownloadLwjgl(char* lwjglVersion, char* path)

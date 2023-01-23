@@ -259,6 +259,7 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args, GameArgs gameArgs, GamePath 
                         cp[cur] = '\0';
                         char* tmp = str_replace(argv[count], argv[count], cp);
                         free(argv[count]);
+                        free(cp);
                         argv[count] = tmp;
                     }
                     
@@ -316,5 +317,6 @@ char** mc_GetJvmArgs(cJSON* manifest, JvmArgs args, GameArgs gameArgs, GamePath 
         argv[3] = NULL;
     }
     
+    free(classseparator);
 	return argv;
 }
