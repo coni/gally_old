@@ -268,7 +268,8 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
                     tmp_i = cJSON_GetObjectItemCaseSensitive(tmp_i, "access_token");
                     if (tmp_i)
                     {
-                        gameArguments.auth_access_token = tmp_i->valuestring;
+                        gameArguments.auth_access_token = malloc(sizeof(char) * (strlen(tmp_i->valuestring) + 1));
+                        strcpy(gameArguments.auth_access_token, tmp_i->valuestring);
                         break;
                     }
                 }
@@ -293,7 +294,6 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
         else
             gameArguments.auth_uuid = mc_GetUUID(gameArguments.auth_player_name);
     }
-
     char** jvmArgs = mc_GetJvmArgs(manifest, jvmArguments, gameArguments, gamePath);
     char** gameArgs = mc_GetGameArgs(manifest, gameArguments);
 

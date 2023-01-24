@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
     CommandArguments commandArguments = mc_GetCommandArguments(argopt.version, gamePath, gameSetting);
     char* command = mc_CreateCommand(commandArguments);
 
+    printf("%s\n", command);
     /* system_Exec(command); */
     CommandArguments_free(&commandArguments);
     GamePath_free(&gamePath);

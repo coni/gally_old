@@ -154,6 +154,7 @@ char* mc_GetUUID(char* username)
     cJSON* responseJson = cJSON_Parse(response.data);
     cJSON* tmp = cJSON_GetObjectItemCaseSensitive(responseJson, "id");
     uuid = malloc(sizeof(char) * (strlen(tmp->valuestring) + 1));
+    strcpy(uuid, tmp->valuestring);
 
     cJSON_Delete(responseJson);
     free(url);

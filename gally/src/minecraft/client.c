@@ -58,7 +58,7 @@ char* mc_DownloadClient(cJSON* manifest, GamePath gamePath, char* version)
 		snprintf(path, len_path, "%s/%s/%s.jar", versionPath, version, version);
 		http_Download(url, path);
 
-        free(path);
+        /* free(path); */
         free(url);
 	}
 
