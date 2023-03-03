@@ -69,6 +69,44 @@ int msleep(long msec)
 #endif
 }
 
+long system_GetSizeFile(char* filename)
+{
+    long s = 0;
+    FILE* fp = fopen(filename,"r");
+    if (fp == NULL)
+        return -1;
+    fseek(fp, 0L, SEEK_END);
+	s = ftell(fp);
+    fclose(fp);
+    return s;
+}
+
+int system_Cp(const char *target_file, const char *source_file)
+{
+    FILE *in = fopen(source_file, "rb");
+    if (in == NULL)
+        return 1;
+
+	if (in)
+	{
+		FILE *out = fopen(target_file,"wb");
+        if (out == NULL)
+        {
+            fclose(in);
+            return 1;
+        }
+		if (out)
+		{
+			int c;
+			while ((c = fgetc(in)) != EOF)
+				fputc(c, out);
+			fclose(out);
+		}
+		fclose(in);
+	}
+    return 0;
+}
+
 int system_IsFile(char* path)
 {
     struct stat path_stat;

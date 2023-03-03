@@ -185,6 +185,7 @@ CommandArguments mc_GetCommandArguments(char* version, GamePath gamePath, GameSe
     {
         commandArguments.java = mc_DownloadJreComponent("jre-legacy", gamePath);
     }
+
     return commandArguments;
 }
 
@@ -202,9 +203,17 @@ CommandArguments mc_GetInheritenceCommandArguments(char* version, GamePath gameP
     }
     char* clientPath = NULL;
     if (parentJvmArgs.client == NULL)
+    {
         clientPath = mc_DownloadClient(manifest, gamePath, version);
+    }
     else
     {
+        char* tmp_clientPath = mc_DownloadClient(manifest, gamePath, version);
+        long sizeParentClient = system_GetSizeFile(parentJvmArgs.client);
+        if (sizeParentClient == 0)
+            system_Cp(parentJvmArgs.client, tmp_clientPath);
+        free(tmp_clientPath);
+
         clientPath = malloc(sizeof(char) * strlen(1 + (parentJvmArgs.client)));
         strcpy(clientPath, parentJvmArgs.client);
     }

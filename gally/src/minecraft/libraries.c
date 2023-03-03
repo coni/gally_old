@@ -262,6 +262,7 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
 			libNameFormatted = NULL;
 
 			fullpath = NULL;
+            libUrl = NULL;
 
             org = str_split(libName->valuestring, ':', 0);
             len_org = strlen(org);
@@ -305,7 +306,6 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
             strcpy(classpath[len_classpath], fullpath);
             len_classpath++;
             classpath = realloc(classpath, sizeof(char *) * (len_classpath  + 1));
-
 			// Download Librarie
 			libDlInfo = cJSON_GetObjectItemCaseSensitive(lib, "downloads");
 			if (libDlInfo)
@@ -322,7 +322,8 @@ char** mc_DownloadLibraries(cJSON *manifest, GamePath gamePath)
 				if (libDlInfo)
 				{
 					size_t len_libUrl = strlen(libDlInfo->valuestring) + strlen(libNameFormatted) + 1;
-					libUrl = realloc(libUrl, sizeof(char) * len_libUrl);
+					/* libUrl = realloc(libUrl, sizeof(char) * len_libUrl); */
+					libUrl = malloc(sizeof(char) * len_libUrl);
 					snprintf(libUrl, len_libUrl, "%s%s", libDlInfo->valuestring, libNameFormatted);
 					http_Download(libUrl, fullpath);	
                     free(libUrl);

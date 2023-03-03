@@ -35,6 +35,8 @@ int		system_Mkdir(char *dir);
 int		system_Exec(char *command);
 int system_IsFile(char* path);
 void system_CreateFile(char* filename, char* string);
+long system_GetSizeFile(char* filename);
+int system_Cp(const char *to, const char *from);
 #ifdef __unix__
 int		system_MakeExec(char* file);
 #endif
