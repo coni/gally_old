@@ -10,6 +10,7 @@ struct ArgOpt_s {
     int skip_assets;
     int login_microsoft;
     int list_installed;
+    int help;
 }; 
 
 typedef struct ArgOpt_s ArgOpt;
@@ -20,8 +21,9 @@ typedef struct {
     char* longname;
     int type; // 0 == "with value"; 1 == "flag"
     int required;
-    char* desc;
+    char* description;
 } Opt;
 
 ArgOpt getopt_Parse(int argc, char* argv[]);
 void getopt_CheckRequired(ArgOpt argopt);
+void getopt_Help();

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-ArgOpt argopt = {NULL, NULL, 0, 0, 0};
+ArgOpt argopt = {NULL, NULL, 0, 0, 0, 0};
 Opt options[] = {
    /* value                     shortname   longname        type    required    description */
     { &argopt.version,          "v",    "version",          0,      1,      "Specify the version of the game" },
@@ -12,7 +12,19 @@ Opt options[] = {
     { &argopt.skip_assets,      "sa",   "skip-assets",      1,      0,      "Don't download assets" },
     { &argopt.login_microsoft,  "lm",   "login-microsoft",  1,      0,      "Login into a Microsoft Account" },
     { &argopt.list_installed,   "li",   "list-installed",   1,      0,      "Show installed version of Minecraft" },
+    { &argopt.help,   "h",   "help",   1,      0,      "Show all the parameters of the launcher" },
 };
+size_t options_len = 6;
+
+void getopt_Help()
+{
+    Opt* ptr = NULL;
+    for (size_t i = 0; i < options_len; i++)
+    {
+        ptr = options + i;
+        printf("%s      %s\n", ptr->longname, ptr->description);
+    }
+}
 
 void getopt_CheckRequired(ArgOpt argopt)
 {

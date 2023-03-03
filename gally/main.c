@@ -20,6 +20,12 @@ int main(int argc, char* argv[])
     GamePath gamePath = mc_DefaultGamePath(NULL);
     GameSettings gameSetting = {NULL, NULL, NULL, 0} ;
 
+    if (argopt.help)
+    {
+        getopt_Help();
+        return 0;
+    }
+
     if (argopt.list_installed)
     {
         mc_ListInstalledVersion(gamePath);
